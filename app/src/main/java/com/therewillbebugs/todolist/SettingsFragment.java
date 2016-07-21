@@ -65,6 +65,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    // should persist user settings when fragment is popped from backstack
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(
