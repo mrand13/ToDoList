@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity
 
     //private members, this should be changed to R.array, temp
     //Drawer Members
-    private String[] drawerContent = {"Test 1", "Test 2", "Exit"};
+    private String[] drawerContent = {"Task View", "Calendar View", "Settings", "Quit Application"};
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private ListView drawerList;

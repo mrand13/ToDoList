@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioGroup;
 
@@ -24,6 +25,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
     private OnSettingsCompleteListener listener;
     private RadioGroup defaultPriorityGroup;
     private CheckBox notificationsEnabledCheckbox;
+    private Button saveButton, cancelButton;
 
     @Override
     public void onAttach(Activity activity){
@@ -52,6 +54,21 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 
         notificationsEnabledCheckbox = (CheckBox)rootView.findViewById(R.id.enable_notifications);
         defaultPriorityGroup = (RadioGroup)rootView.findViewById(R.id.default_priority);
+        saveButton = (Button)rootView.findViewById(R.id.save_btn);
+        cancelButton = (Button)rootView.findViewById(R.id.cancel_btn);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSaveClick(v);
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCancelClick(v);
+            }
+        });
 
         notificationsEnabled = notificationsEnabledCheckbox.isChecked();
         defaultPriorityLevel = getSelectedPriorityLevel();
@@ -70,7 +87,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
     public void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(
             NOTIFICATIONS_ENABLED_KEY,
-            ((CheckBox)getView().findViewById(R.id.enable_notifications)).isChecked()
+            ((CheckBox)rootView.findViewById(R.id.enable_notifications)).isChecked()
         );
 
         outState.putInt(DEFAULT_PRIORITY_KEY, defaultPriorityLevel.getVal());

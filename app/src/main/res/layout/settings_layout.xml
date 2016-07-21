@@ -80,7 +80,6 @@
             android:text="@string/cancel_changes"
             android:id="@+id/cancel_btn"
             android:layout_gravity="right"
-            android:onClick="onCancelClick"
             android:clickable="true" />
 
         <Button
@@ -88,7 +87,6 @@
             android:layout_height="wrap_content"
             android:text="@string/save_changes"
             android:id="@+id/save_btn"
-            android:onClick="onSaveClick"
             android:clickable="true" />
     </LinearLayout>
 
