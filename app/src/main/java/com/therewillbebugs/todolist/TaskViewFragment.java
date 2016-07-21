@@ -40,6 +40,7 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
     private Button createButton, cancelButton, pickTimeButton, pickDateButton;
     private EditText editTextTitle, editTextDescription;
     private RadioGroup priorityRadioGroup;
+    private TextView notificationText;
 
     private static TextView timeDateTV;
     private static String timeString, dateString;
@@ -94,6 +95,7 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
         cancelButton = (Button)rootView.findViewById(R.id.taskview_create_btn_canceltask);
         pickTimeButton = (Button)rootView.findViewById(R.id.taskview_create_btn_picktime);
         pickDateButton = (Button)rootView.findViewById(R.id.taskview_create_btn_pickdate);
+        notificationText = (TextView)rootView.findViewById(R.id.notifications_on);
 
         timeDateTV = (TextView)rootView.findViewById(R.id.taskview_create_tv_datetime);
         timeString = "";
@@ -106,6 +108,13 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
             RadioButton btn = (RadioButton)priorityRadioGroup.getChildAt(defaultPriority.getVal());
             btn.setChecked(true);
         }
+
+        // set text displaying whether or not notifications are enabled
+        boolean notificationsEnabled = SettingsFragment.getNotificationsEnabled();
+        String msg = notificationsEnabled ? getString(R.string.notifications_on)
+                                          : getString(R.string.notifications_off);
+
+        notificationText.setText(msg);
         ///////////////////////////////////////////////////////////////////
 
         if(!initNewTask)

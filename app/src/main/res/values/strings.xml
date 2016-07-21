@@ -18,6 +18,8 @@
     <string name="pick_date">Set Future Date</string>
     <string name="done_task">Done</string>
     <string name="cancel_task">Cancel</string>
+    <string name="notifications_on">Notifications are enabled</string>
+    <string name="notifications_off">Notifications are disabled</string>
 
     <!-- Settings Strings -->
     <string name="default_priority">Default Priority:</string>
