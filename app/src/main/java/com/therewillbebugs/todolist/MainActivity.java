@@ -3,7 +3,9 @@ package com.therewillbebugs.todolist;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.media.audiofx.BassBoost;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -25,7 +27,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements TaskListFragment.OnTaskListItemClicked,
-        TaskViewFragment.OnTaskCreationCompleteListener {
+        TaskViewFragment.OnTaskCreationCompleteListener,
+        SettingsFragment.OnSettingsCompleteListener {
 
     //private members, this should be changed to R.array, temp
     //Drawer Members
@@ -77,7 +80,8 @@ public class MainActivity extends AppCompatActivity
 
         //Action Bar/Toolbar selection handlers
         if (id == R.id.action_settings) {
-            return true;
+            initSettingsDialog();
+            //return true;
         }
         else if(id == R.id.action_sort_tasks){
             initSortDialog();
@@ -144,8 +148,16 @@ public class MainActivity extends AppCompatActivity
         //If the task creation was successful, add it to the list
         if(success && newTaskCreated) {
             taskManager.add(t);
-            notificationService.createNotification(t);
+
+            if (SettingsFragment.getNotificationsEnabled()) {
+                notificationService.createNotification(t);
+            }
         }
+        swapBackToList();
+    }
+
+    @Override
+    public void onSettingsComplete(boolean settingsSaved) {
         swapBackToList();
     }
 
@@ -324,5 +336,27 @@ public class MainActivity extends AppCompatActivity
             }
         });
         builder.create().show();
+    }
+
+    private void initSettingsDialog() {
+        if(findViewById(R.id.content_frame) != null){
+            //Swap fragments using Replace so that we can return to previous views
+            SettingsFragment fragment = new SettingsFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            transaction.replace(R.id.content_frame, fragment, SettingsFragment.TAG);
+            transaction.addToBackStack(SettingsFragment.TAG);
+            transaction.commit();
+        }
+    }
+
+    public void onCancelClick(View v) {
+        SettingsFragment fragment = new SettingsFragment();
+        fragment.onCancelClick(v);
+    }
+
+    public void onSaveClick(View v) {
+        SettingsFragment fragment = new SettingsFragment();
+        fragment.onSaveClick(v);
     }
 }

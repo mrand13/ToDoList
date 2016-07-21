@@ -99,6 +99,15 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
         timeString = "";
         dateString = "";
 
+        // set default priority level from settings if user has enabled one
+        Task.PRIORITY_LEVEL defaultPriority = SettingsFragment.getDefaultPriorityLevel();
+
+        if (defaultPriority != null) {
+            RadioButton btn = (RadioButton)priorityRadioGroup.getChildAt(defaultPriority.getVal());
+            btn.setChecked(true);
+        }
+        ///////////////////////////////////////////////////////////////////
+
         if(!initNewTask)
             populateView();
 

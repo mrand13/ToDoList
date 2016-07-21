@@ -19,7 +19,10 @@
     <string name="done_task">Done</string>
     <string name="cancel_task">Cancel</string>
 
-    <!-- Notification Strings -->
-    <string name="notification_title">To-Do List Notification:</string>
-
+    <!-- Settings Strings -->
+    <string name="default_priority">Default Priority:</string>
+    <string name="enable_notifications">Enable Notifications?</string>
+    <string name="enable">Enable</string>
+    <string name="save_changes">Save</string>
+    <string name="cancel_changes">Cancel</string>
 </resources>
