@@ -1,6 +1,8 @@
 package com.therewillbebugs.todolist;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +26,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 
     private View rootView;
     private OnSettingsCompleteListener listener;
+    private Activity activity;
     private RadioGroup defaultPriorityGroup;
     private CheckBox notificationsEnabledCheckbox;
     private Button saveButton, cancelButton;
@@ -33,6 +36,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
         super.onAttach(activity);
         try{
             listener = (OnSettingsCompleteListener)activity;
+            this.activity = activity;
         } catch (ClassCastException e){
             throw new ClassCastException(activity.toString() + " must implement OnSettingsCompleteListener");
         }
@@ -43,9 +47,10 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
-            notificationsEnabled = savedInstanceState.getBoolean(NOTIFICATIONS_ENABLED_KEY);
+            notificationsEnabled
+                = savedInstanceState.getBoolean(NOTIFICATIONS_ENABLED_KEY);
             defaultPriorityLevel
-                    = Task.PRIORITY_LEVEL.get(savedInstanceState.getInt(DEFAULT_PRIORITY_KEY));
+                = Task.PRIORITY_LEVEL.get(savedInstanceState.getInt(DEFAULT_PRIORITY_KEY));
         }
     }
 
@@ -54,9 +59,9 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
         rootView = inflater.inflate(R.layout.settings_layout, container, false);
 
         notificationsEnabledCheckbox = (CheckBox)rootView.findViewById(R.id.enable_notifications);
-        defaultPriorityGroup = (RadioGroup)rootView.findViewById(R.id.default_priority);
-        saveButton = (Button)rootView.findViewById(R.id.save_btn);
-        cancelButton = (Button)rootView.findViewById(R.id.cancel_btn);
+        defaultPriorityGroup         = (RadioGroup)rootView.findViewById(R.id.default_priority);
+        saveButton                   = (Button)rootView.findViewById(R.id.save_btn);
+        cancelButton                 = (Button)rootView.findViewById(R.id.cancel_btn);
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,9 +76,17 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        notificationsEnabled = notificationsEnabledCheckbox.isChecked();
-        ((RadioButton)defaultPriorityGroup.getChildAt(defaultPriorityLevel.getVal())).setChecked(true);
-        setRetainInstance(true);
+        // retrieve settings from SharedPreferences should they exist
+        SharedPreferences settings = activity.getSharedPreferences("settings", Context.MODE_APPEND);
+        if (settings != null) {
+            notificationsEnabled
+                = settings.getBoolean(NOTIFICATIONS_ENABLED_KEY, true);
+            ((CheckBox)rootView.findViewById(R.id.enable_notifications)).setChecked(notificationsEnabled);
+
+            defaultPriorityLevel
+                = Task.PRIORITY_LEVEL.get(settings.getInt(DEFAULT_PRIORITY_KEY, 0));
+            ((RadioButton)defaultPriorityGroup.getChildAt(defaultPriorityLevel.getVal())).setChecked(true);
+        }
 
         return rootView;
     }
@@ -81,6 +94,22 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences.Editor outState
+            = activity.getSharedPreferences("settings", Context.MODE_APPEND).edit();
+
+        outState.putInt(DEFAULT_PRIORITY_KEY, defaultPriorityLevel.getVal());
+        outState.putBoolean(
+            NOTIFICATIONS_ENABLED_KEY,
+            ((CheckBox)rootView.findViewById(R.id.enable_notifications)).isChecked()
+        );
+
+        outState.commit();
+
+        super.onPause();
     }
 
     // should persist user settings when fragment is popped from backstack
@@ -114,9 +143,10 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
     }
 
     private Task.PRIORITY_LEVEL getSelectedPriorityLevel() {
-        int radioButtonID = defaultPriorityGroup.getCheckedRadioButtonId();
-        View radioButton = defaultPriorityGroup.findViewById(radioButtonID);
-        int index = defaultPriorityGroup.indexOfChild(radioButton);
+        int  radioButtonID = defaultPriorityGroup.getCheckedRadioButtonId();
+        View radioButton   = defaultPriorityGroup.findViewById(radioButtonID);
+        int  index         = defaultPriorityGroup.indexOfChild(radioButton);
+
         return Task.PRIORITY_LEVEL.get(index);
     }
 }

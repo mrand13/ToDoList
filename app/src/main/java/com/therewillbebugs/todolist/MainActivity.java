@@ -349,14 +349,4 @@ public class MainActivity extends AppCompatActivity
             transaction.commit();
         }
     }
-
-    public void onCancelClick(View v) {
-        SettingsFragment fragment = new SettingsFragment();
-        fragment.onCancelClick(v);
-    }
-
-    public void onSaveClick(View v) {
-        SettingsFragment fragment = new SettingsFragment();
-        fragment.onSaveClick(v);
-    }
 }
