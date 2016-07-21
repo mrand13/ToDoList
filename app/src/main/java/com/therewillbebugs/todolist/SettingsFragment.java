@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 public class SettingsFragment extends android.support.v4.app.Fragment {
@@ -19,7 +20,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
     public static final String DEFAULT_PRIORITY_KEY = "DefaultPriority";
 
     private static boolean notificationsEnabled;
-    private static Task.PRIORITY_LEVEL defaultPriorityLevel;
+    private static Task.PRIORITY_LEVEL defaultPriorityLevel = Task.PRIORITY_LEVEL.NONE;
 
     private View rootView;
     private OnSettingsCompleteListener listener;
@@ -71,7 +72,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
         });
 
         notificationsEnabled = notificationsEnabledCheckbox.isChecked();
-        defaultPriorityLevel = getSelectedPriorityLevel();
+        ((RadioButton)defaultPriorityGroup.getChildAt(defaultPriorityLevel.getVal())).setChecked(true);
         setRetainInstance(true);
 
         return rootView;
