@@ -31,8 +31,10 @@ public class NotificationPublisher extends BroadcastReceiver {
     }
 
     public static void removeNotificationTime(Long time) {
-        notificationTimes.remove(time);
-        Collections.sort(notificationTimes);
+        if (notificationTimes.contains(time)) {
+            notificationTimes.remove(time);
+            Collections.sort(notificationTimes);
+        }
     }
 
     @Override

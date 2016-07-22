@@ -3,9 +3,7 @@ package com.therewillbebugs.todolist;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Color;
-import android.media.audiofx.BassBoost;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -13,8 +11,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -80,8 +76,12 @@ public class MainActivity extends AppCompatActivity
 
         //Action Bar/Toolbar selection handlers
         if (id == R.id.action_settings) {
-            initSettingsDialog();
+            initSettingsView();
+            //initCompletedTaskListView(taskManager.getTaskList());
             //return true;
+        }
+        else if (id == R.id.completed_taskview) {
+            initCompletedTaskListView(taskManager.getTaskList());
         }
         else if(id == R.id.action_sort_tasks){
             initSortDialog();
@@ -271,6 +271,29 @@ public class MainActivity extends AppCompatActivity
             transaction.commit();
         }
     }
+
+    private void initSettingsView() {
+        if(findViewById(R.id.content_frame) != null){
+            //Swap fragments using Replace so that we can return to previous views
+            SettingsFragment fragment = new SettingsFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            transaction.replace(R.id.content_frame, fragment, SettingsFragment.TAG);
+            transaction.addToBackStack(SettingsFragment.TAG);
+            transaction.commit();
+        }
+    }
+
+    private void initCompletedTaskListView(ArrayList<Task> taskList) {
+        if (findViewById(R.id.content_frame) != null) {
+            CompletedTasksFragment fragment = CompletedTasksFragment.newInstance(taskList);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            transaction.replace(R.id.content_frame, fragment, CompletedTasksFragment.TAG);
+            transaction.addToBackStack(CompletedTasksFragment.TAG);
+            transaction.commit();
+        }
+    }
     //endregion
 
     private void deleteSelectedTask(){
@@ -336,17 +359,5 @@ public class MainActivity extends AppCompatActivity
             }
         });
         builder.create().show();
-    }
-
-    private void initSettingsDialog() {
-        if(findViewById(R.id.content_frame) != null){
-            //Swap fragments using Replace so that we can return to previous views
-            SettingsFragment fragment = new SettingsFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            transaction.replace(R.id.content_frame, fragment, SettingsFragment.TAG);
-            transaction.addToBackStack(SettingsFragment.TAG);
-            transaction.commit();
-        }
     }
 }
