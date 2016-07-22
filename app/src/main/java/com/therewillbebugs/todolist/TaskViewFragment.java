@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
@@ -60,12 +61,13 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
     //Override functions
     //-------------------------------------
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
+        Activity a = (Activity)context;
         try{
-            callbackListener = (OnTaskCreationCompleteListener)activity;
+            callbackListener = (OnTaskCreationCompleteListener)a;
         } catch (ClassCastException e){
-            throw new ClassCastException(activity.toString() + " must implement OnTaskCreationCompleteListener");
+            throw new ClassCastException(a.toString() + " must implement OnTaskCreationCompleteListener");
         }
     }
 

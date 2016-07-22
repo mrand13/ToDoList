@@ -1,8 +1,12 @@
 package com.therewillbebugs.todolist;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Task implements Serializable {
     //Priority Level enum with support for converting ints
@@ -54,6 +58,31 @@ public class Task implements Serializable {
         this.notifications = true;
         this.time = null;
         this.date = Calendar.getInstance();
+    }
+
+    public Task(String uid, String title, String description, int priority, String date, String time){
+        this.title = title;
+        this.description = description;
+        this.priorityLevel = PRIORITY_LEVEL.get(priority);
+        //TODO FIX DATE/TIME
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMMM d, yyyy");
+        try {
+            this.date = Calendar.getInstance();
+            this.date.setTime(sdf.parse(date));
+        }
+        catch(Exception e){this.date = null;}
+        sdf = new SimpleDateFormat("h:mm a");
+        try {
+            this.time = Calendar.getInstance();
+            this.time.setTime(sdf.parse(time));
+        }
+        catch(Exception e){this.time = null;}
+        this.notifications = true;
+        this.complete = false;
+    }
+
+    public Task(DB_Task db_task){
+        this(db_task.uid, db_task.title, db_task.description, db_task.priority, db_task.dateStr, db_task.timeStr);
     }
 
     //Mutators
@@ -120,6 +149,23 @@ public class Task implements Serializable {
         if(!tempTime.isEmpty())
         return "Complete By: " + tempDate + " at " + tempTime;
         else return "Complete By: " + tempDate;
+    }
+
+    @Override
+    public String toString(){
+        return "Title: " + title + " Desc: " + description + " priority: " + priorityLevel.getVal();
+    }
+
+    @Exclude
+    public Map<String, Object> toMap(){
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("uid","temp");
+        result.put("title",title);
+        result.put("description",description);
+        result.put("priority",priorityLevel.getVal());
+        result.put("dateStr",getDateToString());
+        result.put("timeStr",getTimeToString());
+        return result;
     }
 
     //private functions

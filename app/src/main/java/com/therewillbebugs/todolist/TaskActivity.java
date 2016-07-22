@@ -1,6 +1,7 @@
 package com.therewillbebugs.todolist;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,15 +21,19 @@ import android.widget.ListView;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 
 public class TaskActivity extends AppCompatActivity
         implements TaskListFragment.OnTaskListItemClicked,
-        TaskViewFragment.OnTaskCreationCompleteListener {
+        TaskViewFragment.OnTaskCreationCompleteListener,
+        TaskManager.OnDatabaseUpdate{
 
     //private members, this should be changed to R.array, temp
     //Drawer Members
-    private String[] drawerContent = {"Test 1", "Test 2", "Exit"};
+    private String[] drawerContent = {"Test 1", "Settings", "Sign Out", "Exit"};
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private ListView drawerList;
@@ -46,8 +52,10 @@ public class TaskActivity extends AppCompatActivity
 
         //Init Task List
         selectedTask = null;
-        taskManager = new TaskManager();
-        taskManager.tempInit(); //TODO REMOVE THIS
+        taskManager = new TaskManager(this);
+
+        //Init Database
+        taskManager.initDatabase();
 
         //Init toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -56,8 +64,7 @@ public class TaskActivity extends AppCompatActivity
         //Init Drawer
         initDrawer();
 
-        //Init main fragment, will default to creating TaskView
-        initTaskListView(taskManager.getTaskList());
+        initTaskListView();
     }
 
     @Override
@@ -100,6 +107,12 @@ public class TaskActivity extends AppCompatActivity
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        FirebaseAuth.getInstance().signOut();
     }
 
     //region CALLBACK HANDLERS
@@ -148,7 +161,12 @@ public class TaskActivity extends AppCompatActivity
 
     @Override
     public void onTaskListDragDropSwap(int positionA, int positionB){
-        taskManager.swapPositions(positionA,positionB);
+        taskManager.swapPositions(positionA, positionB);
+        syncTaskList();
+    }
+
+    @Override
+    public void onDatabaseUpdate(){
         syncTaskList();
     }
 
@@ -192,13 +210,25 @@ public class TaskActivity extends AppCompatActivity
     class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-            selectItem(position);
+            selectDrawerItem(position);
         }
     }
 
-    private void selectItem(int position) {
+    private void selectDrawerItem(int position) {
         //Swaps the fragments in the main content frame based on selection
+        if(position == 0){
 
+        }
+        else if(position == 1){
+
+        }
+        else if(position == 2){
+            //Sign out
+            this.finish();
+            FirebaseAuth.getInstance().signOut();
+            Intent loginIntent = new Intent(getApplicationContext(),LoginActivity.class);
+            startActivity(loginIntent);
+        }
         drawerList.setItemChecked(position, true);
         drawerLayout.closeDrawer(drawerList);
     }
@@ -218,6 +248,7 @@ public class TaskActivity extends AppCompatActivity
 
     private void initTaskListView(ArrayList<Task> taskList) {
         if (findViewById(R.id.content_frame) != null) {
+            Log.d("taskActivity", "tasksize: " + taskList.size());
             //Create a new Fragment, using ADD because this will always be the first view ran
             TaskListFragment fragment = TaskListFragment.newInstance(taskList);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -292,8 +323,10 @@ public class TaskActivity extends AppCompatActivity
         FragmentManager man = this.getSupportFragmentManager();
         TaskListFragment frag = (TaskListFragment) man.findFragmentByTag(TaskListFragment.TAG);
         //TODO Fix this error handling, its gross
-        if (frag != null)
+        if (frag != null) {
+            Log.d("taskActivity", "sync size: " + taskManager.size());
             frag.refreshRecyclerList(taskManager.getTaskList());
+        }
         else Toast.makeText(this, "Error couldn't refresh", Toast.LENGTH_SHORT).show();
     }
 
