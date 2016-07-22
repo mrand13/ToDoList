@@ -5,18 +5,45 @@
     android:layout_height="match_parent"
     android:layout_marginTop="?attr/actionBarSize">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/task_header"
+        android:id="@+id/create_task_header"
+        android:layout_gravity="center_horizontal"
+        android:textSize="30sp" />
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/taskview_create_layout_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="test2">
+        android:hint="test2"
+        android:layout_marginBottom="10dp"
+        android:padding="5dp">
 
         <EditText
             android:id="@+id/taskview_create_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:hint="@string/task_title_hint"/>
+            android:hint="@string/task_title_hint"
+            android:padding="10dp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/taskview_create_layout_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="test2"
+        android:layout_margin="5dp">
+
+        <EditText
+            android:id="@+id/taskview_create_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="@string/task_description_hint"/>
 
     </android.support.design.widget.TextInputLayout>
 
@@ -24,13 +51,16 @@
         android:id="@+id/taskview_create_radio_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/priority_radio"/>
+        android:text="@string/priority_radio"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp" />
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/taskview_create_radiogrp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center">
 
         <RadioButton
             android:id="@+id/taskview_create_radio_none"
@@ -58,73 +88,70 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_margin="10dp">
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="10dp">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/taskview_create_tv_datetime"
                 android:layout_centerHorizontal="true"
                 android:text="No Time Set"/>
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/taskview_create_btn_picktime"
                 android:layout_below="@+id/taskview_create_tv_datetime"
                 android:text="@string/pick_time"/>
 
-            <Button
+            <android.support.v7.widget.AppCompatButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/taskview_create_btn_pickdate"
                 android:layout_below="@+id/taskview_create_tv_datetime"
                 android:layout_toRightOf="@+id/taskview_create_btn_picktime"
-                android:text="@string/pick_date"/>
+                android:text="@string/pick_date"
+                android:layout_alignParentRight="true" />
         </RelativeLayout>
-    </LinearLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/taskview_create_layout_desc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="test2">
-
-        <EditText
-            android:id="@+id/taskview_create_desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:hint="@string/task_description_hint"/>
-
-    </android.support.design.widget.TextInputLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/taskview_create_btn_canceltask"
-            android:text="@string/cancel_task"
-            android:onClick="cancelCreateTask"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/taskview_create_btn_createtask"
-            android:text="@string/done_task"/>
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/notifications_on"
-        android:layout_gravity="center_horizontal"
         android:text="@string/notifications_on"
         android:textSize="16sp"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="100dp">
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/taskview_create_btn_canceltask"
+            android:text="@string/cancel_task"
+            android:onClick="cancelCreateTask"/>
+
+        <android.support.v7.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/taskview_create_btn_createtask"
+            android:text="@string/done_task"
+            android:layout_gravity="center_horizontal" />
+    </LinearLayout>
 
 </LinearLayout>

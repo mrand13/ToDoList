@@ -7,6 +7,7 @@
     <string name="drawer_close">Drawer Close</string>
 
     <!-- TaskView Create Strings (Adding a new Task) -->
+    <string name="task_header">Create New Task</string>
     <string name="task_title_hint">Task Title</string>
     <string name="task_description_hint">Task Description</string>
     <string name="priority_radio">Priority Level</string>
