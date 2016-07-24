@@ -10,14 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class CompletedTasksFragment extends android.support.v4.app.Fragment
     implements TaskListAdapter.OnCardViewAdapterClickListener {
     public static final String TAG = "CompletedTasksFragment";
     public static final String COMPLETED_TASKS_KEY = "CompletedTasks";
+    public static final String TASK_RATIO = "TaskRatio";
 
     private View rootView;
     private Activity activity;
@@ -26,24 +30,7 @@ public class CompletedTasksFragment extends android.support.v4.app.Fragment
     private RecyclerView.LayoutManager recyclerManager;
     private RecyclerView.Adapter recyclerAdapter;
     private ItemTouchHelper itemTouchHelper;
-
-    public static CompletedTasksFragment newInstance(ArrayList<Task> tasks){
-        CompletedTasksFragment fragment = new CompletedTasksFragment();
-        if(tasks != null){
-            Bundle args = new Bundle();
-
-            ArrayList<Task> completedTasks = new ArrayList<>();
-            for (Task t : tasks) {
-                if (t.isComplete()) {
-                    completedTasks.add(t);
-                }
-            }
-
-            args.putSerializable(COMPLETED_TASKS_KEY, completedTasks);
-            fragment.setArguments(args);
-        }
-        return fragment;
-    }
+    private float taskCompleteRatio;
 
     @Override
     public void onCardViewAdapterClicked(View v, int t) {
@@ -61,6 +48,47 @@ public class CompletedTasksFragment extends android.support.v4.app.Fragment
     public void onCardViewAdapterStartDrag(RecyclerView.ViewHolder vh) {
 
     }
+
+    public static CompletedTasksFragment newInstance(ArrayList<Task> tasks){
+        CompletedTasksFragment fragment = new CompletedTasksFragment();
+        if(tasks != null){
+            Bundle args = new Bundle();
+
+            ArrayList<Task> completedTasks = new ArrayList<>();
+            float completedTaskRatio, tasksCompletedToday, tasksDueToday;
+            completedTaskRatio = tasksCompletedToday = tasksDueToday = 0;
+
+            for (Task t : tasks) {
+                if (t.isComplete()) {
+                    completedTasks.add(t);
+                }
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+                boolean taskDueToday
+                    = sdf.format(t.getDate().getTime()).equals(
+                        sdf.format(Calendar.getInstance().getTime())
+                    );
+
+                if (taskDueToday) {
+                    tasksDueToday++;
+
+                    if (t.isComplete()) {
+                        tasksCompletedToday++;
+                    }
+                }
+            }
+
+            completedTaskRatio = tasksCompletedToday / tasksDueToday;
+
+            args.putFloat(TASK_RATIO, completedTaskRatio * 100);
+            args.putSerializable(COMPLETED_TASKS_KEY, completedTasks);
+            fragment.setArguments(args);
+        }
+        return fragment;
+    }
+
+
+
 
     @Override
     public void onAttach(Activity activity){
@@ -80,6 +108,7 @@ public class CompletedTasksFragment extends android.support.v4.app.Fragment
         if (args != null && args.containsKey(COMPLETED_TASKS_KEY)) {
             ArrayList<Task> temp = (ArrayList<Task>) args.getSerializable(COMPLETED_TASKS_KEY);
             this.completedTasks = new ArrayList<>(temp);
+            taskCompleteRatio = args.getFloat(TASK_RATIO);
         }
     }
 
@@ -88,6 +117,10 @@ public class CompletedTasksFragment extends android.support.v4.app.Fragment
         rootView = inflater.inflate(R.layout.completed_tasklist_layout, container, false);
 
         initRecycler();
+
+        ((TextView)rootView.findViewById(R.id.completed_task_ratio)).setText(
+            Integer.toString((int)taskCompleteRatio) + getString(R.string.completed_task_ratio)
+        );
 
         return rootView;
     }

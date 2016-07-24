@@ -33,4 +33,5 @@
 
     <!-- Completed TaskView Strings -->
     <string name="completed_tasks_header">Completed Tasks</string>
+    <string name="completed_task_ratio">% of tasks completed</string>
 </resources>
