@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -194,6 +195,12 @@ public class TaskActivity extends AppCompatActivity
         navDrawer.getMenu().getItem(0).setChecked(true);
         previousMenuItem = navDrawer.getMenu().getItem(0);
         drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close);
+
+        //Setup current user text
+        TextView headerCurrentUser = (TextView)navDrawer.findViewById(R.id.nav_header_currentuser);
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(cUser != null)
+            headerCurrentUser.setText("Welcome " + cUser.getEmail());
     }
 
     private void selectDrawerItem(MenuItem menuItem){
