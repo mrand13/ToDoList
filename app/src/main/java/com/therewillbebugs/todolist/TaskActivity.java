@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -33,10 +36,10 @@ public class TaskActivity extends AppCompatActivity
 
     //private members, this should be changed to R.array, temp
     //Drawer Members
-    private String[] drawerContent = {"Test 1", "Settings", "Sign Out", "Exit"};
     private DrawerLayout drawerLayout;
+    private NavigationView navDrawer;
     private ActionBarDrawerToggle drawerToggle;
-    private ListView drawerList;
+    private MenuItem previousMenuItem;
 
     //Toolbar menu
     private Toolbar toolbar;
@@ -174,7 +177,8 @@ public class TaskActivity extends AppCompatActivity
     //endregion
 
     //region DRAWER
-    private void initDrawer() {
+    /*
+    private void initDrawerx() {
         //Reference: https://developer.android.com/training/implementing-navigation/nav-drawer.html
 
         //Initialize the Drawer Layout content
@@ -204,7 +208,7 @@ public class TaskActivity extends AppCompatActivity
         getSupportActionBar().setHomeButtonEnabled(true);
 
         drawerList = (ListView) findViewById(R.id.left_drawer);
-        drawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, drawerContent));
+        //drawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, drawerContent));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
     }
 
@@ -233,6 +237,54 @@ public class TaskActivity extends AppCompatActivity
         }
         drawerList.setItemChecked(position, true);
         drawerLayout.closeDrawer(drawerList);
+    }
+    */
+
+
+    private void initDrawer(){
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        navDrawer = (NavigationView)findViewById(R.id.nav_drawer);
+        navDrawer.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem){
+                menuItem.setChecked(true);
+                if(previousMenuItem != null)
+                    previousMenuItem.setChecked(false);
+                previousMenuItem = menuItem;
+                selectDrawerItem(menuItem);
+                return true;
+            }
+        });
+        navDrawer.getMenu().getItem(0).setChecked(true);
+        previousMenuItem = navDrawer.getMenu().getItem(0);
+        drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close);
+    }
+
+    private void selectDrawerItem(MenuItem menuItem){
+        Fragment fragment = null;
+        Class fragmentClass;
+        int id = menuItem.getItemId();
+        if(id == R.id.nav_drawer_tasklist){
+            fragmentClass = TaskListFragment.class;
+        }
+        else if(id == R.id.nav_drawer_completed_tasks){
+            //fragmentClass = CompletedTasksFragment.class
+        }
+        else if(id == R.id.nav_drawer_settings){
+
+        }
+        else if(id == R.id.nav_drawer_signout){
+            taskManager.cleanupDatabse();
+            this.finish();
+            FirebaseAuth.getInstance().signOut();
+            Intent loginIntent = new Intent(getApplicationContext(),LoginActivity.class);
+            startActivity(loginIntent);
+        }
+        else fragmentClass = TaskListFragment.class;
+
+        menuItem.setChecked(true);
+        setTitle(menuItem.getTitle());
+        drawerLayout.closeDrawers();
     }
     //endregion
 

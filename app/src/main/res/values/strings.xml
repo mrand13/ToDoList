@@ -12,6 +12,7 @@
     <!-- Navigation Drawer Strings -->
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
+    <string name="nav_header">Tusk List</string>
 
     <!-- TaskView Create Strings (Adding a new Task) -->
     <string name="task_title_hint">Task Title</string>
