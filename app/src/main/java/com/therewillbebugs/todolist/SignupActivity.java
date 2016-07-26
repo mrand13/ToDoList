@@ -92,7 +92,7 @@ public class SignupActivity extends AppCompatActivity {
             flag = false;
         }
         else if(password.getText().toString().length() < 6){
-            password.setError("Pass must be at least 6 characters");
+            password.setError("Password must be at least 6 characters");
             flag = false;
         }
         else password.setError(null);

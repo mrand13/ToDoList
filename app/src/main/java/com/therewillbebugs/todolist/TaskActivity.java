@@ -150,6 +150,8 @@ public class TaskActivity extends AppCompatActivity
         if(success && newTaskCreated) {
             taskManager.add(t);
         }
+        else if(success)
+            taskManager.update(t);
         swapBackToList();
     }
 

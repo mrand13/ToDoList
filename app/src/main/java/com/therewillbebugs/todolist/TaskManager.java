@@ -200,8 +200,16 @@ public class TaskManager {
         return true;
     }
 
-    public void add(int position, Task t){
+    public boolean update(Task t){
+        String key = t.getTaskKey();
+        Map<String, Object> taskValues = t.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(key,taskValues);
+        dbRef.updateChildren(childUpdates);
+        return true;
+    }
 
+    public void add(int position, Task t){
         taskList.add(position,t);
     }
 
