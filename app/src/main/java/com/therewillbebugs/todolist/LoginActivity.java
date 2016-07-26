@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private AppCompatButton loginButton;
     private ProgressDialog progressDialog;
     private EditText email, password;
+    private TextView help;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +37,14 @@ public class LoginActivity extends AppCompatActivity {
 
         initFirebase();
         initComponents();
+        help = (TextView) findViewById(R.id.help_click);
+
+            help.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    Intent myIntent = new Intent(view.getContext(), WelcomeActivity.class);
+                    startActivityForResult(myIntent, 0);
+                }
+            });
     }
 
     @Override
@@ -51,11 +64,30 @@ public class LoginActivity extends AppCompatActivity {
     private void initFirebase(){
         fbAuth = FirebaseAuth.getInstance();
         fbAuthListener = new FirebaseAuth.AuthStateListener(){
+
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth){
+
                 FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                String emailval = email.getText().toString();
+
                 if(user != null){
                     //User is signed in
+
+                    LayoutInflater inflater = getLayoutInflater();
+                    View layout = inflater.inflate(R.layout.welcome_toast,
+                            (ViewGroup) findViewById(R.id.toast_layout_root));
+
+                    TextView text = (TextView) layout.findViewById(R.id.textView);
+                    text.setText("Welcome " + emailval);
+
+                    Toast toast = new Toast(getApplicationContext());
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.setDuration(Toast.LENGTH_SHORT);
+                    toast.setView(layout);
+                    toast.show();
+
                     //Launch Task Actvitiy
                     startTaskActivity();
                 }
@@ -105,6 +137,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 signIn(email.getText().toString(),password.getText().toString());
+
             }
         });
     }
@@ -129,4 +162,5 @@ public class LoginActivity extends AppCompatActivity {
         if(progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
     }
+
 }
