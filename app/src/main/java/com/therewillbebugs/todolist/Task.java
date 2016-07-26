@@ -39,7 +39,7 @@ public class Task implements Serializable {
     private PRIORITY_LEVEL priorityLevel;
     private boolean complete, notifications;
 
-    //public functions
+    //Constructors
     //-------------------------------------
     public Task(){
         this.task_key = "";
@@ -49,7 +49,7 @@ public class Task implements Serializable {
         this.complete = false;
         this.notifications = true;
         this.time = null;
-        this.date = null;
+        this.date = Calendar.getInstance();
     }
 
     public Task(String task_key, String title, String description, int priority, String date, String time){
@@ -57,30 +57,33 @@ public class Task implements Serializable {
         this.title = title;
         this.description = description;
         this.priorityLevel = PRIORITY_LEVEL.get(priority);
+        this.notifications = true;
+        this.complete = false;
 
         SimpleDateFormat sdf;
+        //If the date string is somehow empty, set it to the current day
         if(date.isEmpty())
             this.date = Calendar.getInstance();
         else {
-
-            sdf = new SimpleDateFormat("EEEE, MMMM d, yyyy");
+            sdf = new SimpleDateFormat("MM/dd/yyyy");
+            //Try to format the date by parsing the dateStr from DB
             try {
                 this.date = Calendar.getInstance();
                 this.date.setTime(sdf.parse(date));
             } catch (Exception e) {
-                this.date = null;
+                this.date = Calendar.getInstance();
             }
         }
-        sdf = new SimpleDateFormat("h:mm a");
+        sdf = new SimpleDateFormat("hh:mm a");
         try {
+            //Try to format the time by parsing the timeStr from DB
             this.time = Calendar.getInstance();
             this.time.setTime(sdf.parse(time));
         }
-        catch(Exception e){this.time = null;}
-        this.notifications = true;
-        this.complete = false;
+        catch(Exception e){this.time = null;}   //Time can be set to null, empty time is valid
     }
 
+    //Constructor for the DB_Task, DB_Task variables are case/name sensitive
     public Task(DB_Task db_task){
         this(db_task.task_key, db_task.title, db_task.description, db_task.priority, db_task.dateStr, db_task.timeStr);
     }
@@ -89,18 +92,14 @@ public class Task implements Serializable {
     //-------------------------------------
     public void setTaskKey(String in){this.task_key = in;}
     public void setTitle(String in){this.title = in;}
-    public void setDescription(String in){
-        this.description = in;
-    }
+    public void setDescription(String in){this.description = in;}
     public void setPriorityLevel(PRIORITY_LEVEL in){
         this.priorityLevel = in;
     }
     public void setComplete(boolean in){
         this.complete = in;
     }
-    public void setNotificationsEnabled(boolean in){
-        this.notifications = in;
-    }
+    public void setNotificationsEnabled(boolean in){this.notifications = in;}
     public void setTime(Calendar in){this.time = in;}
     public void setDate(Calendar in){this.date = in;}
 
@@ -108,32 +107,27 @@ public class Task implements Serializable {
     //-------------------------------------
     public String getTaskKey(){return task_key;}
     public String getTitle(){return title;}
-    public String getDescription(){
-        return description;
-    }
-
+    public String getDescription(){return description;}
     public PRIORITY_LEVEL getPriorityLevel(){
         return priorityLevel;
     }
-
     public boolean isComplete(){
         return complete;
     }
-
-    public boolean isNotificationsEnabled(){
-        return notifications;
-    }
-
+    public boolean isNotificationsEnabled(){return notifications;}
     public Calendar getTime(){return time;}
     public Calendar getDate(){return date;}
+
+    //Returns the string formatted in the correct way with pm/am switch 'a'
     public String getTimeToString(){
         if(time != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
             return sdf.format(time.getTime());
         }
         else return "";
     }
 
+    //Returns the date formatted in the visual way with the current day displayed
     public String getDateToString(){
         if(date != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMMM d, yyyy");
@@ -142,6 +136,16 @@ public class Task implements Serializable {
         else return "";
     }
 
+    //Returns the date formatted in the correct way for the database
+    public String getDateToDBString(){
+        if(date != null){
+            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+            return sdf.format(date.getTime());
+        }
+        return "";
+    }
+
+    //Returns both the date and time formatted in a correct string
     public String getDateTimeString(){
         if(time == null && date == null)
             return "";
@@ -149,15 +153,16 @@ public class Task implements Serializable {
         tempTime = getTimeToString();
         tempDate = getDateToString();
         if(!tempTime.isEmpty())
-        return "Complete By: " + tempDate + " at " + tempTime;
+            return "Complete By: " + tempDate + " at " + tempTime;
         else return "Complete By: " + tempDate;
     }
 
     @Override
     public String toString(){
-        return "Title: " + title + " Desc: " + description + " priority: " + priorityLevel.getVal();
+        return "Title: " + title + " Desc: " + description + " priority: " + priorityLevel.getVal() + " date: " + getDateToString() + " time: " + getTimeToString();
     }
 
+    //Function to collect the class values to be sent to the DB using hashmap
     @Exclude
     public Map<String, Object> toMap(){
         HashMap<String, Object> result = new HashMap<>();
@@ -165,11 +170,8 @@ public class Task implements Serializable {
         result.put("title",title);
         result.put("description",description);
         result.put("priority",priorityLevel.getVal());
-        result.put("dateStr",getDateToString());
+        result.put("dateStr",getDateToDBString());
         result.put("timeStr",getTimeToString());
         return result;
     }
-
-    //private functions
-    //-------------------------------------
 }

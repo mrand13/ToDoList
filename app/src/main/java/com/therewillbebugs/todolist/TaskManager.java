@@ -12,7 +12,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +37,8 @@ public class TaskManager {
     private Context context;
 
     private final String dbRefTag = "/user-tasks/";
+
+    //Constructor
     public TaskManager(Context context){
         this.context = context;
         taskListIDs = new ArrayList<>();
@@ -46,6 +47,7 @@ public class TaskManager {
         dbListener = (OnDatabaseUpdate)this.context;
     }
 
+    //Initialize the database and the auth for current user
     public void initDatabase(){
         fbAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -54,15 +56,16 @@ public class TaskManager {
         initChildListeners();
     }
 
+    //Create database child event listeners
     private void initChildListeners(){
-        //Create database child event listeners
         this.childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
+                //Get value from database and create task with that value
                 DB_Task db_task = dataSnapshot.getValue(DB_Task.class);
                 Task task = new Task(db_task);
 
-                //Update the recycler view
+                //Add to the main lists
                 taskListIDs.add(dataSnapshot.getKey());
                 taskList.add(task);
                 dbListener.onDatabaseUpdate();
@@ -70,10 +73,12 @@ public class TaskManager {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String previousChild) {
+                //Get value from database and create task with that value
                 DB_Task db_task = dataSnapshot.getValue(DB_Task.class);
                 Task task = new Task(db_task);
                 String task_key = dataSnapshot.getKey();
 
+                //Find the key and then update the list based on the value
                 int index = taskListIDs.indexOf(task_key);
                 if(index >= 0){
                     taskList.set(index, task);
@@ -84,6 +89,7 @@ public class TaskManager {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                //Find the given key in the list of IDs and then remove it
                 String task_key = dataSnapshot.getKey();
                 int index = taskListIDs.indexOf(task_key);
                 if(index >= 0){
@@ -96,12 +102,14 @@ public class TaskManager {
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String previousChild) {
+                //Get value from database and create task with that value
                 DB_Task db_task = dataSnapshot.getValue(DB_Task.class);
                 Task task = new Task(db_task);
                 String task_key = dataSnapshot.getKey();
 
                 int index = taskListIDs.indexOf(task_key);
                 if(index >=0){
+                    //TODO implement or remove this function
                     dbListener.onDatabaseUpdate();
                 }
             }
@@ -115,6 +123,8 @@ public class TaskManager {
         dbRef.addChildEventListener(childEventListener);
     }
 
+    //Removes the listener from the database upon view switching to prevent errors (Switching contexts)
+    //Is called when TaskManager should be deleted
     public void cleanupDatabse(){
         if(childEventListener != null)
             dbRef.removeEventListener(childEventListener);
@@ -190,6 +200,9 @@ public class TaskManager {
     }
 
     //Mutators
+    //------------------------------------
+    //Adds the task to the given database reference by pushing a new key() and appending content
+    //to that key.
     public boolean add(Task t){
         String key = dbRef.child("tasks").push().getKey();
         t.setTaskKey(key);
@@ -200,6 +213,7 @@ public class TaskManager {
         return true;
     }
 
+    //Updates the Database with the given task, updatesChildren() based on given key in the database
     public boolean update(Task t){
         String key = t.getTaskKey();
         Map<String, Object> taskValues = t.toMap();
@@ -220,6 +234,8 @@ public class TaskManager {
         else return false;
     }
 
+    //Removes the given 'key' from the database by calling a transaction on the data, setting the
+    //mutabledata to null removes it from the database
     public boolean remove(final String task_key){
         DatabaseReference taskRef = database.getReference(dbRefTag + fbAuth.getCurrentUser().getUid() + "/" + task_key);
         taskRef.runTransaction(new Transaction.Handler(){
@@ -234,9 +250,7 @@ public class TaskManager {
             }
 
             @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot){
-                Log.d("TaskManager","removeTransaction:onComplete: " + databaseError);
-            }
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot){}
         });
         return true;
     }
@@ -255,10 +269,13 @@ public class TaskManager {
     public int getSortLevel(){return sortLevel; }
 }
 
+//Helper class for the Database, The variable names and constructor variable names are CASE SENSITIVE
+//They must be named exactly what the variables are in the database, Portal pushes to these exact variables
 class DB_Task{
+    //Class members public because db_task is only used in creation of main Task then garbage collected
     public String task_key, title, description, dateStr, timeStr;
     public int priority;
-    private DB_Task(){}
+    private DB_Task(){} //Default constructor required
 
     public DB_Task(String task_key, String title, String description, int priority, String dateStr, String timeStr){
         this.task_key = task_key;

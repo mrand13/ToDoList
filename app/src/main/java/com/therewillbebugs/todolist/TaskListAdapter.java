@@ -95,7 +95,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
     }
 
     public TaskListAdapter(ArrayList<Task> taskList, OnCardViewAdapterClickListener callbackListener){
-        this.taskList = new ArrayList<Task>();
+        this.taskList = new ArrayList<>();
         this.taskList.addAll(taskList);
         this.cbClickListener = callbackListener;
     }

@@ -326,7 +326,6 @@ public class TaskActivity extends AppCompatActivity
         TaskListFragment frag = (TaskListFragment) man.findFragmentByTag(TaskListFragment.TAG);
         //TODO Fix this error handling, its gross
         if (frag != null) {
-            Log.d("taskActivity", "sync size: " + taskManager.size());
             frag.refreshRecyclerList(taskManager.getTaskList());
         }
         else Toast.makeText(this, "Error couldn't refresh", Toast.LENGTH_SHORT).show();
