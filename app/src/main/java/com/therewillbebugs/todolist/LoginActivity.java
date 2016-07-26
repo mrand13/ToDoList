@@ -28,7 +28,10 @@ public class LoginActivity extends AppCompatActivity {
     private AppCompatButton loginButton;
     private ProgressDialog progressDialog;
     private EditText email, password;
-    private TextView help;
+    private TextView link_signup, help;
+
+    //Result calllbacks
+    private static final int REQUEST_SIGNUP_RESULT = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,14 +40,6 @@ public class LoginActivity extends AppCompatActivity {
 
         initFirebase();
         initComponents();
-        help = (TextView) findViewById(R.id.help_click);
-
-            help.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    Intent myIntent = new Intent(view.getContext(), WelcomeActivity.class);
-                    startActivityForResult(myIntent, 0);
-                }
-            });
     }
 
     @Override
@@ -59,6 +54,19 @@ public class LoginActivity extends AppCompatActivity {
         hideProgressDialog();
         if(fbAuthListener != null)
             fbAuth.removeAuthStateListener(fbAuthListener);
+    }
+
+    @Override
+    public void onBackPressed(){
+        moveTaskToBack(true);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode == REQUEST_SIGNUP_RESULT){
+            if(resultCode == RESULT_OK){
+            }
+        }
     }
 
     private void initFirebase(){
@@ -138,6 +146,21 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 signIn(email.getText().toString(),password.getText().toString());
 
+            }
+        });
+        this.link_signup = (TextView)findViewById(R.id.login_link_signup);
+        this.link_signup.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Intent intent = new Intent(getApplicationContext(),SignupActivity.class);
+                startActivityForResult(intent,REQUEST_SIGNUP_RESULT);
+            }
+        });
+        help = (TextView) findViewById(R.id.help_click);
+        help.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Intent myIntent = new Intent(getApplicationContext(), WelcomeActivity.class);
+                startActivityForResult(myIntent, 0);
             }
         });
     }

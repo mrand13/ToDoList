@@ -32,6 +32,7 @@ public class Task implements Serializable {
 
     //class members
     //-------------------------------------
+    private String task_key;
     private String title;
     private String description;
     private Calendar time, date;
@@ -41,6 +42,7 @@ public class Task implements Serializable {
     //public functions
     //-------------------------------------
     public Task(){
+        this.task_key = "";
         this.title = "";
         this.description = "";
         this.priorityLevel = PRIORITY_LEVEL.NONE;
@@ -50,27 +52,25 @@ public class Task implements Serializable {
         this.date = null;
     }
 
-    public Task(String title, String description, PRIORITY_LEVEL priorityLevel){
-        this.title = title;
-        this.description = description;
-        this.priorityLevel = priorityLevel;
-        this.complete = false;
-        this.notifications = true;
-        this.time = null;
-        this.date = Calendar.getInstance();
-    }
-
-    public Task(String uid, String title, String description, int priority, String date, String time){
+    public Task(String task_key, String title, String description, int priority, String date, String time){
+        this.task_key = task_key;
         this.title = title;
         this.description = description;
         this.priorityLevel = PRIORITY_LEVEL.get(priority);
-        //TODO FIX DATE/TIME
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMMM d, yyyy");
-        try {
+
+        SimpleDateFormat sdf;
+        if(date.isEmpty())
             this.date = Calendar.getInstance();
-            this.date.setTime(sdf.parse(date));
+        else {
+
+            sdf = new SimpleDateFormat("EEEE, MMMM d, yyyy");
+            try {
+                this.date = Calendar.getInstance();
+                this.date.setTime(sdf.parse(date));
+            } catch (Exception e) {
+                this.date = null;
+            }
         }
-        catch(Exception e){this.date = null;}
         sdf = new SimpleDateFormat("h:mm a");
         try {
             this.time = Calendar.getInstance();
@@ -82,11 +82,12 @@ public class Task implements Serializable {
     }
 
     public Task(DB_Task db_task){
-        this(db_task.uid, db_task.title, db_task.description, db_task.priority, db_task.dateStr, db_task.timeStr);
+        this(db_task.task_key, db_task.title, db_task.description, db_task.priority, db_task.dateStr, db_task.timeStr);
     }
 
     //Mutators
     //-------------------------------------
+    public void setTaskKey(String in){this.task_key = in;}
     public void setTitle(String in){this.title = in;}
     public void setDescription(String in){
         this.description = in;
@@ -105,6 +106,7 @@ public class Task implements Serializable {
 
     //Accessors
     //-------------------------------------
+    public String getTaskKey(){return task_key;}
     public String getTitle(){return title;}
     public String getDescription(){
         return description;
@@ -159,7 +161,7 @@ public class Task implements Serializable {
     @Exclude
     public Map<String, Object> toMap(){
         HashMap<String, Object> result = new HashMap<>();
-        result.put("uid","temp");
+        result.put("task_key",task_key);
         result.put("title",title);
         result.put("description",description);
         result.put("priority",priorityLevel.getVal());

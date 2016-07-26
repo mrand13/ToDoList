@@ -6,6 +6,8 @@
     <string name="need_account">Need Account? Create One</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="signup">Create Account</string>
+    <string name="already_have_account">Already Have Account? Login Here</string>
 
     <!-- Navigation Drawer Strings -->
     <string name="drawer_open">Drawer Open</string>

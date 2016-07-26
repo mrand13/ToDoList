@@ -17,6 +17,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity" android:theme="@style/MyMaterialTheme"/>
+        <activity android:name=".SignupActivity" android:theme="@style/MyMaterialTheme"/>
+        <activity android:name=".WelcomeActivity" android:theme="@style/MyMaterialTheme"/>
         <activity android:name=".TaskActivity" android:theme="@style/MyMaterialTheme"/>
     </application>
 

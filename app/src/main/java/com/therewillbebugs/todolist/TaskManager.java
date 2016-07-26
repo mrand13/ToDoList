@@ -2,6 +2,7 @@ package com.therewillbebugs.todolist;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -9,6 +10,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -24,24 +27,23 @@ public class TaskManager {
     }
 
     //class members
+    private ArrayList<String> taskListIDs;
     private ArrayList<Task> taskList;
     private int sortLevel;
     private FirebaseDatabase database;
     private DatabaseReference dbRef;
     private FirebaseAuth fbAuth;
     private OnDatabaseUpdate dbListener;
+    private ChildEventListener childEventListener;
+    private Context context;
 
     private final String dbRefTag = "/user-tasks/";
     public TaskManager(Context context){
-        taskList = new ArrayList<Task>();
+        this.context = context;
+        taskListIDs = new ArrayList<>();
+        taskList = new ArrayList<>();
         sortLevel = 0;
-        dbListener = (OnDatabaseUpdate)context;
-    }
-
-    public void tempInit(){
-        taskList.add(new Task("First task","This is a task note", Task.PRIORITY_LEVEL.HIGH));
-        taskList.add(new Task("Second task","", Task.PRIORITY_LEVEL.MEDIUM));
-        taskList.add(new Task("Third task","Task note task note", Task.PRIORITY_LEVEL.LOW));
+        dbListener = (OnDatabaseUpdate)this.context;
     }
 
     public void initDatabase(){
@@ -53,48 +55,69 @@ public class TaskManager {
     }
 
     private void initChildListeners(){
-        dbRef.addValueEventListener(new ValueEventListener() {
+        //Create database child event listeners
+        this.childEventListener = new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //DB_Task db_task = dataSnapshot.getValue(DB_Task.class);
-                //taskList.add(new Task(db_task));
-                //dbListener.onDatabaseUpdate();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        ChildEventListener childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
                 DB_Task db_task = dataSnapshot.getValue(DB_Task.class);
-                taskList.add(new Task(db_task));
+                Task task = new Task(db_task);
+
+                //Update the recycler view
+                taskListIDs.add(dataSnapshot.getKey());
+                taskList.add(task);
                 dbListener.onDatabaseUpdate();
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChild) {
+                DB_Task db_task = dataSnapshot.getValue(DB_Task.class);
+                Task task = new Task(db_task);
+                String task_key = dataSnapshot.getKey();
 
+                int index = taskListIDs.indexOf(task_key);
+                if(index >= 0){
+                    taskList.set(index, task);
+                    dbListener.onDatabaseUpdate();
+                }
+                else Log.w("TaskListAdapterFragment","taskList:onChildChanged:unknown_child: " + task_key);
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                String task_key = dataSnapshot.getKey();
+                int index = taskListIDs.indexOf(task_key);
+                if(index >= 0){
+                    taskListIDs.remove(index);
+                    taskList.remove(index);
+                    dbListener.onDatabaseUpdate();
+                }
+                else Log.w("TaskListAdapterFragment","taskList:onChildRemoved:unknown_child: " + task_key);
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChild) {
+                DB_Task db_task = dataSnapshot.getValue(DB_Task.class);
+                Task task = new Task(db_task);
+                String task_key = dataSnapshot.getKey();
 
+                int index = taskListIDs.indexOf(task_key);
+                if(index >=0){
+                    dbListener.onDatabaseUpdate();
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.w("TaskListAdapterFragment","taskList:onCancelled", databaseError.toException());
+                Toast.makeText(context, "Failed to load task list!", Toast.LENGTH_SHORT).show();
             }
         };
         dbRef.addChildEventListener(childEventListener);
+    }
+
+    public void cleanupDatabse(){
+        if(childEventListener != null)
+            dbRef.removeEventListener(childEventListener);
     }
 
     //Sort Functions
@@ -139,12 +162,11 @@ public class TaskManager {
         Collections.sort(taskList, new Comparator<Task>() {
             @Override
             public int compare(Task t1, Task t2) {
-                if(t1.isComplete() ^ t2.isComplete()){
-                    if(t1.isComplete())
+                if (t1.isComplete() ^ t2.isComplete()) {
+                    if (t1.isComplete())
                         return 1;
                     else return -1;
-                }
-                else {
+                } else {
                     int level = t1.getPriorityLevel().compareTo(t2.getPriorityLevel());
                     if (level == 0) {
                         //Sort by time/date
@@ -170,11 +192,12 @@ public class TaskManager {
     //Mutators
     public boolean add(Task t){
         String key = dbRef.child("tasks").push().getKey();
+        t.setTaskKey(key);
         Map<String, Object> taskValues = t.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(key,taskValues);
         dbRef.updateChildren(childUpdates);
-        return taskList.add(t);
+        return true;
     }
 
     public void add(int position, Task t){
@@ -189,8 +212,25 @@ public class TaskManager {
         else return false;
     }
 
-    public void clear(){
-        taskList.clear();
+    public boolean remove(final String task_key){
+        DatabaseReference taskRef = database.getReference(dbRefTag + fbAuth.getCurrentUser().getUid() + "/" + task_key);
+        taskRef.runTransaction(new Transaction.Handler(){
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData){
+                DB_Task db_task = mutableData.getValue(DB_Task.class);
+                if(db_task == null)
+                    return Transaction.success(mutableData);
+
+                mutableData.setValue(null);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot){
+                Log.d("TaskManager","removeTransaction:onComplete: " + databaseError);
+            }
+        });
+        return true;
     }
 
     public int size(){
@@ -208,11 +248,12 @@ public class TaskManager {
 }
 
 class DB_Task{
-    public String uid, title, description, dateStr, timeStr;
+    public String task_key, title, description, dateStr, timeStr;
     public int priority;
     private DB_Task(){}
 
-    public DB_Task(String uid, String title, String description, int priority, String dateStr, String timeStr){
+    public DB_Task(String task_key, String title, String description, int priority, String dateStr, String timeStr){
+        this.task_key = task_key;
         this.title = title;
         this.description =  description;
         this.priority = priority;

@@ -94,7 +94,6 @@ public class TaskActivity extends AppCompatActivity
             drawerLayout.closeDrawers();
             return;
         }
-        super.onBackPressed();
     }
 
     @Override
@@ -224,6 +223,7 @@ public class TaskActivity extends AppCompatActivity
         }
         else if(position == 2){
             //Sign out
+            taskManager.cleanupDatabse();
             this.finish();
             FirebaseAuth.getInstance().signOut();
             Intent loginIntent = new Intent(getApplicationContext(),LoginActivity.class);
@@ -293,7 +293,7 @@ public class TaskActivity extends AppCompatActivity
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    taskManager.remove(selectedTask);
+                    taskManager.remove(selectedTask.getTaskKey());
                     dialog.dismiss();
                     swapBackToList();
                     selectedTask = null;
