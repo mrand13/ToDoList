@@ -1,4 +1,4 @@
-package com.therewillbebugs.todolist;
+package com.therewillbebugs.todolist.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.therewillbebugs.todolist.R;
 
 //Help fragment for displaying information about how to use the app
 public class HelpFragment extends android.support.v4.app.Fragment {

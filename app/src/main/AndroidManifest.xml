@@ -18,9 +18,9 @@
         </activity>
         <activity android:name=".LoginActivity" android:theme="@style/MyMaterialTheme"/>
         <activity android:name=".SignupActivity" android:theme="@style/MyMaterialTheme"/>
-        <activity android:name=".TaskActivity" android:theme="@style/MyMaterialTheme"/>
+        <activity android:name=".task_components.TaskActivity" android:theme="@style/MyMaterialTheme"/>
 
-        <receiver android:name=".NotificationPublisher" />
+        <receiver android:name=".notification_utils.NotificationPublisher" />
     </application>
 
 </manifest>

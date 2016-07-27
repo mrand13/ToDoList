@@ -1,4 +1,4 @@
-package com.therewillbebugs.todolist;
+package com.therewillbebugs.todolist.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import com.therewillbebugs.todolist.R;
+import com.therewillbebugs.todolist.task_components.Task;
 
 public class SettingsFragment extends android.support.v4.app.Fragment {
     public interface OnSettingsCompleteListener {

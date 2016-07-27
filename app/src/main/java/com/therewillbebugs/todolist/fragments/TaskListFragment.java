@@ -1,12 +1,10 @@
-package com.therewillbebugs.todolist;
+package com.therewillbebugs.todolist.fragments;
 
 import android.app.Activity;
-import android.content.ClipData;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,10 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+
+import com.therewillbebugs.todolist.R;
+import com.therewillbebugs.todolist.task_components.Task;
+import com.therewillbebugs.todolist.task_components.TaskListAdapter;
+
 import java.util.ArrayList;
 
 public class TaskListFragment extends android.support.v4.app.Fragment
-        implements TaskListAdapter.OnCardViewAdapterClickListener{
+        implements TaskListAdapter.OnCardViewAdapterClickListener {
     //Callback setup for Activity communication
     public interface OnTaskListItemClicked{
         public void onTaskListItemClick(int position);

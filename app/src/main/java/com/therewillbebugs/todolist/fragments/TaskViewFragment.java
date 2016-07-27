@@ -1,4 +1,4 @@
-package com.therewillbebugs.todolist;
+package com.therewillbebugs.todolist.fragments;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -14,13 +14,15 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.therewillbebugs.todolist.R;
+import com.therewillbebugs.todolist.task_components.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

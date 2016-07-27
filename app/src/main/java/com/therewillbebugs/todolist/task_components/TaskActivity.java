@@ -1,13 +1,10 @@
-package com.therewillbebugs.todolist;
+package com.therewillbebugs.todolist.task_components;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -15,18 +12,21 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.therewillbebugs.todolist.LoginActivity;
+import com.therewillbebugs.todolist.notification_utils.NotificationService;
+import com.therewillbebugs.todolist.R;
+import com.therewillbebugs.todolist.fragments.CompletedTasksFragment;
+import com.therewillbebugs.todolist.fragments.HelpFragment;
+import com.therewillbebugs.todolist.fragments.SettingsFragment;
+import com.therewillbebugs.todolist.fragments.TaskListFragment;
+import com.therewillbebugs.todolist.fragments.TaskViewFragment;
 
 import java.util.ArrayList;
 

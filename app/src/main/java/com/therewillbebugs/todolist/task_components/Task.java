@@ -1,4 +1,4 @@
-package com.therewillbebugs.todolist;
+package com.therewillbebugs.todolist.task_components;
 
 import com.google.firebase.database.Exclude;
 

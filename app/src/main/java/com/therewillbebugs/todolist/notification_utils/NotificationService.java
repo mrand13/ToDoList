@@ -1,4 +1,4 @@
-package com.therewillbebugs.todolist;
+package com.therewillbebugs.todolist.notification_utils;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -7,6 +7,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+
+import com.therewillbebugs.todolist.R;
+import com.therewillbebugs.todolist.task_components.Task;
 
 import java.util.Calendar;
 

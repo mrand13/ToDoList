@@ -2,7 +2,7 @@
   Modeled after code found at https://gist.github.com/BrandonSmith/6679223
  */
 
-package com.therewillbebugs.todolist;
+package com.therewillbebugs.todolist.notification_utils;
 
 import android.app.Notification;
 import android.app.NotificationManager;
