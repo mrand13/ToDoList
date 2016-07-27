@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.MenuItem;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.TextView;
@@ -159,18 +160,16 @@ public class TaskActivity extends AppCompatActivity
     //TODO IMPLEMENT THIS IN DB
     public void onTaskListItemChecked(int position, boolean checked){
         selectedTask = taskManager.get(position);
+        Log.d("TaskActivity", "Selected task position: " + position);
         if(checked) {
+            //Task was just set to checked
             Toast.makeText(this, "Task Complete!", Toast.LENGTH_SHORT).show();
-            selectedTask.setComplete(true);
-            taskManager.remove(selectedTask);
-            taskManager.add(selectedTask);
+            taskManager.checkedChangePosition(selectedTask,true);
         }
         else{
-            selectedTask.setComplete(false);
-            taskManager.remove(selectedTask);
-            taskManager.add(0,selectedTask);
+            //Task was set to be incomplete
+            taskManager.checkedChangePosition(selectedTask,false);
         }
-        syncTaskList();
     }
 
     @Override
@@ -202,6 +201,7 @@ public class TaskActivity extends AppCompatActivity
     @Override
     public void onDatabaseUpdate(){
         syncTaskList();
+        taskManager.sort();
     }
 
     @Override

@@ -114,7 +114,7 @@ public class TaskManager {
                 int index = taskListIDs.indexOf(task_key);
                 if(index >=0){
                     //TODO implement or remove this function
-                    dbListener.onDatabaseUpdate();
+                    //dbListener.onDatabaseUpdate();
                 }
             }
 
@@ -199,8 +199,20 @@ public class TaskManager {
         });
     }
 
+    public void sort(){
+        if(sortLevel == 0)
+            sortByTimeDate();
+        else if(sortLevel == 1)
+            sortByPriority();
+    }
+
     public void swapPositions(int positionA, int positionB){
         Collections.swap(taskList, positionA, positionB);
+    }
+
+    public void checkedChangePosition(Task selectedTask, boolean checked){
+        selectedTask.setComplete(checked);
+        update(selectedTask);
     }
 
     //Mutators
@@ -280,14 +292,16 @@ class DB_Task{
     //Class members public because db_task is only used in creation of main Task then garbage collected
     public String task_key, title, description, dateStr, timeStr;
     public int priority;
+    public boolean isComplete;
     private DB_Task(){} //Default constructor required
 
-    public DB_Task(String task_key, String title, String description, int priority, String dateStr, String timeStr){
+    public DB_Task(String task_key, String title, String description, int priority, String dateStr, String timeStr, boolean isComplete){
         this.task_key = task_key;
         this.title = title;
         this.description =  description;
         this.priority = priority;
         this.dateStr = dateStr;
         this.timeStr = timeStr;
+        this.isComplete = isComplete;
     }
 }
