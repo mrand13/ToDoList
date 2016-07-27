@@ -16,7 +16,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.therewillbebugs.todolist.task_components.TaskActivity;
 
 //Source: https://firebase.google.com/docs/auth/android/password-auth
 public class LoginActivity extends AppCompatActivity {

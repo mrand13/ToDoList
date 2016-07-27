@@ -1,4 +1,4 @@
-package com.therewillbebugs.todolist.task_components;
+package com.therewillbebugs.todolist;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +27,8 @@ import com.therewillbebugs.todolist.fragments.HelpFragment;
 import com.therewillbebugs.todolist.fragments.SettingsFragment;
 import com.therewillbebugs.todolist.fragments.TaskListFragment;
 import com.therewillbebugs.todolist.fragments.TaskViewFragment;
+import com.therewillbebugs.todolist.task_components.Task;
+import com.therewillbebugs.todolist.task_components.TaskManager;
 
 import java.util.ArrayList;
 
