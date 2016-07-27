@@ -1,28 +1,136 @@
 package com.therewillbebugs.todolist;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TaskManager {
-    //class members
-    private ArrayList<Task> taskList;
-    private int sortLevel;
-    private NotificationService notificationService;
-
-    public TaskManager(NotificationService notificationService){
-        this.notificationService = notificationService;
-
-        taskList = new ArrayList<Task>();
-        sortLevel = 0;
+    //Database listener
+    public interface OnDatabaseUpdate{
+        public void onDatabaseUpdate();
     }
 
-    public void tempInit(){
-        taskList.add(new Task("First task","This is a task note", Task.PRIORITY_LEVEL.HIGH));
-        taskList.add(new Task("Second task","", Task.PRIORITY_LEVEL.MEDIUM));
-        taskList.add(new Task("Third task","Task note task note", Task.PRIORITY_LEVEL.LOW));
+    //class members
+    private ArrayList<String> taskListIDs;
+    private ArrayList<Task> taskList;
+    private int sortLevel;
+    private FirebaseDatabase database;
+    private DatabaseReference dbRef;
+    private FirebaseAuth fbAuth;
+    private OnDatabaseUpdate dbListener;
+    private ChildEventListener childEventListener;
+    private Context context;
+    private NotificationService notificationService;
+
+    private final String dbRefTag = "/user-tasks/";
+
+    //Constructor
+    public TaskManager(Context context, NotificationService notificationService){
+        this.context = context;
+        taskListIDs = new ArrayList<>();
+        taskList = new ArrayList<>();
+        sortLevel = 0;
+        dbListener = (OnDatabaseUpdate)this.context;
+        this.notificationService = notificationService;
+    }
+
+    //Initialize the database and the auth for current user
+    public void initDatabase(){
+        fbAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        //TODO: Throw exception if null pointer or if Auth fails
+        dbRef = database.getReference(dbRefTag + fbAuth.getCurrentUser().getUid() + "/");
+        initChildListeners();
+    }
+
+    //Create database child event listeners
+    private void initChildListeners(){
+        this.childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
+                //Get value from database and create task with that value
+                DB_Task db_task = dataSnapshot.getValue(DB_Task.class);
+                Task task = new Task(db_task);
+
+                //Add to the main lists
+                taskListIDs.add(dataSnapshot.getKey());
+                taskList.add(task);
+                dbListener.onDatabaseUpdate();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChild) {
+                //Get value from database and create task with that value
+                DB_Task db_task = dataSnapshot.getValue(DB_Task.class);
+                Task task = new Task(db_task);
+                String task_key = dataSnapshot.getKey();
+
+                //Find the key and then update the list based on the value
+                int index = taskListIDs.indexOf(task_key);
+                if(index >= 0){
+                    taskList.set(index, task);
+                    dbListener.onDatabaseUpdate();
+                }
+                else Log.w("TaskListAdapterFragment","taskList:onChildChanged:unknown_child: " + task_key);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                //Find the given key in the list of IDs and then remove it
+                String task_key = dataSnapshot.getKey();
+                int index = taskListIDs.indexOf(task_key);
+                if(index >= 0){
+                    notificationService.deleteNotification(taskList.get(index));
+                    taskListIDs.remove(index);
+                    taskList.remove(index);
+                    dbListener.onDatabaseUpdate();
+                }
+                else Log.w("TaskListAdapterFragment","taskList:onChildRemoved:unknown_child: " + task_key);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChild) {
+                //Get value from database and create task with that value
+                DB_Task db_task = dataSnapshot.getValue(DB_Task.class);
+                Task task = new Task(db_task);
+                String task_key = dataSnapshot.getKey();
+
+                int index = taskListIDs.indexOf(task_key);
+                if(index >=0){
+                    //TODO implement or remove this function
+                    dbListener.onDatabaseUpdate();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("TaskListAdapterFragment","taskList:onCancelled", databaseError.toException());
+                Toast.makeText(context, "Failed to load task list!", Toast.LENGTH_SHORT).show();
+            }
+        };
+        dbRef.addChildEventListener(childEventListener);
+    }
+
+    //Removes the listener from the database upon view switching to prevent errors (Switching contexts)
+    //Is called when TaskManager should be deleted
+    public void cleanupDatabse(){
+        if(childEventListener != null)
+            dbRef.removeEventListener(childEventListener);
     }
 
     //Sort Functions
@@ -35,7 +143,6 @@ public class TaskManager {
         Collections.sort(taskList, new Comparator<Task>() {
             @Override
             public int compare(Task t1, Task t2) {
-                //XOR for Only one complete item and one non complete
                 if(t1.isComplete() ^ t2.isComplete()){
                     if(t1.isComplete())
                         return 1;
@@ -68,13 +175,11 @@ public class TaskManager {
         Collections.sort(taskList, new Comparator<Task>() {
             @Override
             public int compare(Task t1, Task t2) {
-                //XOR for Only one complete item and one non complete
-                if(t1.isComplete() ^ t2.isComplete()){
-                    if(t1.isComplete())
+                if (t1.isComplete() ^ t2.isComplete()) {
+                    if (t1.isComplete())
                         return 1;
                     else return -1;
-                }
-                else {
+                } else {
                     int level = t1.getPriorityLevel().compareTo(t2.getPriorityLevel());
                     if (level == 0) {
                         //Sort by time/date
@@ -98,8 +203,27 @@ public class TaskManager {
     }
 
     //Mutators
+    //------------------------------------
+    //Adds the task to the given database reference by pushing a new key() and appending content
+    //to that key.
     public boolean add(Task t){
-        return taskList.add(t);
+        String key = dbRef.child("tasks").push().getKey();
+        t.setTaskKey(key);
+        Map<String, Object> taskValues = t.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(key,taskValues);
+        dbRef.updateChildren(childUpdates);
+        return true;
+    }
+
+    //Updates the Database with the given task, updatesChildren() based on given key in the database
+    public boolean update(Task t){
+        String key = t.getTaskKey();
+        Map<String, Object> taskValues = t.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(key,taskValues);
+        dbRef.updateChildren(childUpdates);
+        return true;
     }
 
     public void add(int position, Task t){
@@ -109,14 +233,30 @@ public class TaskManager {
     public boolean remove(Task t){
         if(taskList.contains(t)){
             notificationService.deleteNotification(t);
-
             return taskList.remove(t);
         }
         else return false;
     }
 
-    public void clear(){
-        taskList.clear();
+    //Removes the given 'key' from the database by calling a transaction on the data, setting the
+    //mutabledata to null removes it from the database
+    public boolean remove(final String task_key){
+        DatabaseReference taskRef = database.getReference(dbRefTag + fbAuth.getCurrentUser().getUid() + "/" + task_key);
+        taskRef.runTransaction(new Transaction.Handler(){
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData){
+                DB_Task db_task = mutableData.getValue(DB_Task.class);
+                if(db_task == null)
+                    return Transaction.success(mutableData);
+
+                mutableData.setValue(null);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot){}
+        });
+        return true;
     }
 
     public int size(){
@@ -131,4 +271,22 @@ public class TaskManager {
         return taskList.get(position);
     }
     public int getSortLevel(){return sortLevel; }
+}
+
+//Helper class for the Database, The variable names and constructor variable names are CASE SENSITIVE
+//They must be named exactly what the variables are in the database, Portal pushes to these exact variables
+class DB_Task{
+    //Class members public because db_task is only used in creation of main Task then garbage collected
+    public String task_key, title, description, dateStr, timeStr;
+    public int priority;
+    private DB_Task(){} //Default constructor required
+
+    public DB_Task(String task_key, String title, String description, int priority, String dateStr, String timeStr){
+        this.task_key = task_key;
+        this.title = title;
+        this.description =  description;
+        this.priority = priority;
+        this.dateStr = dateStr;
+        this.timeStr = timeStr;
+    }
 }

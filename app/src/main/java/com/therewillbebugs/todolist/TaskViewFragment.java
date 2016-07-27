@@ -162,11 +162,6 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-    }
-
     //functions
     //-------------------------------------
 

@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -19,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.support.v4.widget.DrawerLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,14 +33,16 @@ import java.util.ArrayList;
 public class TaskActivity extends AppCompatActivity
         implements TaskListFragment.OnTaskListItemClicked,
         TaskViewFragment.OnTaskCreationCompleteListener,
+        SettingsFragment.OnSettingsCompleteListener,
         TaskManager.OnDatabaseUpdate{
 
     //private members, this should be changed to R.array, temp
     //Drawer Members
-    private String[] drawerContent = {"Test 1", "Settings", "Sign Out", "Exit"};
+    private Class currentFragmentClass;
     private DrawerLayout drawerLayout;
+    private NavigationView navDrawer;
     private ActionBarDrawerToggle drawerToggle;
-    private ListView drawerList;
+    private MenuItem previousMenuItem;
 
     //Toolbar menu
     private Toolbar toolbar;
@@ -45,6 +51,9 @@ public class TaskActivity extends AppCompatActivity
     private TaskManager taskManager;
     private Task selectedTask;
 
+    //NotificationService
+    private NotificationService notificationService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +61,8 @@ public class TaskActivity extends AppCompatActivity
 
         //Init Task List
         selectedTask = null;
-        taskManager = new TaskManager(this);
+        notificationService = new NotificationService(this);
+        taskManager = new TaskManager(this,notificationService);
 
         //Init Database
         taskManager.initDatabase();
@@ -65,6 +75,7 @@ public class TaskActivity extends AppCompatActivity
         initDrawer();
 
         initTaskListView();
+        currentFragmentClass = TaskListFragment.class;
     }
 
     @Override
@@ -77,7 +88,9 @@ public class TaskActivity extends AppCompatActivity
 
         //Action Bar/Toolbar selection handlers
         if (id == R.id.action_settings) {
-            return true;
+            initSettingsView();
+            //initCompletedTaskListView(taskManager.getTaskList());
+            //return true;
         }
         else if(id == R.id.action_sort_tasks){
             initSortDialog();
@@ -93,6 +106,9 @@ public class TaskActivity extends AppCompatActivity
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawers();
             return;
+        }
+        if(!currentFragmentClass.equals(TaskListFragment.class)){
+            super.onBackPressed();
         }
     }
 
@@ -128,6 +144,7 @@ public class TaskActivity extends AppCompatActivity
     }
 
     @Override
+    //TODO IMPLEMENT THIS IN DB
     public void onTaskListItemChecked(int position, boolean checked){
         selectedTask = taskManager.get(position);
         if(checked) {
@@ -149,6 +166,9 @@ public class TaskActivity extends AppCompatActivity
         //If the task creation was successful, add it to the list
         if(success && newTaskCreated) {
             taskManager.add(t);
+            if (SettingsFragment.getNotificationsEnabled()) {
+                notificationService.createNotification(t);
+            }
         }
         else if(success)
             taskManager.update(t);
@@ -158,6 +178,7 @@ public class TaskActivity extends AppCompatActivity
     @Override
     public void onTaskListAddButtonClick(){
         initTaskView();
+        currentFragmentClass = TaskViewFragment.class;
     }
 
     @Override
@@ -171,92 +192,108 @@ public class TaskActivity extends AppCompatActivity
         syncTaskList();
     }
 
+    @Override
+    public void onSettingsComplete(boolean settingsSaved) {
+        swapBackToList();
+    }
     //endregion
 
     //region DRAWER
     private void initDrawer() {
         //Reference: https://developer.android.com/training/implementing-navigation/nav-drawer.html
-
-        //Initialize the Drawer Layout content
-        //should call drawerContent = getResources().getStringArray(R.array.xxx); in the future
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT);
-        drawerToggle = new ActionBarDrawerToggle(
-                this, drawerLayout, R.string.drawer_open, R.string.drawer_close
-        ) {
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        navDrawer = (NavigationView)findViewById(R.id.nav_drawer);
+        navDrawer.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onDrawerOpened(View view) {
-                super.onDrawerOpened(view);
+            public boolean onNavigationItemSelected(MenuItem menuItem){
+                menuItem.setChecked(true);
+                if(previousMenuItem != null)
+                    previousMenuItem.setChecked(false);
+                previousMenuItem = menuItem;
+                selectDrawerItem(menuItem);
+                return true;
             }
+        });
+        navDrawer.getMenu().getItem(0).setChecked(true);
+        previousMenuItem = navDrawer.getMenu().getItem(0);
+        drawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close);
 
-            @Override
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-            }
-
-            @Override
-            public void onDrawerSlide(View view, float slideOffset) {
-                super.onDrawerSlide(view, slideOffset);
-            }
-        };
-        drawerLayout.setDrawerListener(drawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        drawerList = (ListView) findViewById(R.id.left_drawer);
-        drawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, drawerContent));
-        drawerList.setOnItemClickListener(new DrawerItemClickListener());
+        //Setup current user text
+        TextView headerCurrentUser = (TextView)navDrawer.findViewById(R.id.nav_header_currentuser);
+        FirebaseUser cUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(cUser != null)
+            headerCurrentUser.setText("Welcome " + cUser.getEmail());
     }
 
-    class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            selectDrawerItem(position);
-        }
-    }
-
-    private void selectDrawerItem(int position) {
+    private void selectDrawerItem(MenuItem menuItem) {
         //Swaps the fragments in the main content frame based on selection
-        if(position == 0){
-
+        int id = menuItem.getItemId();
+        if(id == R.id.nav_drawer_tasklist){
+            if(!currentFragmentClass.equals(TaskListFragment.class)) {
+                initTaskListView();
+                syncTaskList();
+                currentFragmentClass = TaskListFragment.class;
+            }
         }
-        else if(position == 1){
-
+        else if(id == R.id.nav_drawer_completed_tasks){
+            if(!currentFragmentClass.equals(CompletedTasksFragment.class)) {
+                initCompletedTaskListView(taskManager.getTaskList());
+                currentFragmentClass = CompletedTasksFragment.class;
+            }
         }
-        else if(position == 2){
-            //Sign out
+        else if(id == R.id.nav_drawer_settings){
+            if(!currentFragmentClass.equals(SettingsFragment.class)){
+                initSettingsView();
+                currentFragmentClass = SettingsFragment.class;
+            }
+        }
+        else if(id == R.id.nav_drawer_signout){
             taskManager.cleanupDatabse();
             this.finish();
             FirebaseAuth.getInstance().signOut();
             Intent loginIntent = new Intent(getApplicationContext(),LoginActivity.class);
             startActivity(loginIntent);
         }
-        drawerList.setItemChecked(position, true);
-        drawerLayout.closeDrawer(drawerList);
+        else currentFragmentClass = TaskListFragment.class;
+
+        menuItem.setChecked(true);
+        setTitle(menuItem.getTitle());
+        drawerLayout.closeDrawers();
     }
     //endregion
 
     //region FRAGMENT INITIALIZATION
     private void initTaskListView() {
         if (findViewById(R.id.content_frame) != null) {
-            //Create a new Fragment, using ADD because this will always be the first view ran
+            //Create a new Fragment
             TaskListFragment fragment = new TaskListFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.content_frame, fragment, TaskListFragment.TAG);
+            transaction.replace(R.id.content_frame, fragment, TaskListFragment.TAG);
             transaction.addToBackStack(TaskListFragment.TAG);
+            transaction.commit();
+            getSupportFragmentManager().executePendingTransactions();
+        }
+    }
+
+    private void initSettingsView() {
+        if(findViewById(R.id.content_frame) != null){
+            //Swap fragments using Replace so that we can return to previous views
+            SettingsFragment fragment = new SettingsFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            transaction.replace(R.id.content_frame, fragment, SettingsFragment.TAG);
+            transaction.addToBackStack(SettingsFragment.TAG);
             transaction.commit();
         }
     }
 
-    private void initTaskListView(ArrayList<Task> taskList) {
+    private void initCompletedTaskListView(ArrayList<Task> taskList) {
         if (findViewById(R.id.content_frame) != null) {
-            Log.d("taskActivity", "tasksize: " + taskList.size());
-            //Create a new Fragment, using ADD because this will always be the first view ran
-            TaskListFragment fragment = TaskListFragment.newInstance(taskList);
+            CompletedTasksFragment fragment = CompletedTasksFragment.newInstance(taskList);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-            transaction.add(R.id.content_frame, fragment, TaskListFragment.TAG);
-            transaction.addToBackStack(TaskListFragment.TAG);
+            transaction.replace(R.id.content_frame, fragment, CompletedTasksFragment.TAG);
+            transaction.addToBackStack(CompletedTasksFragment.TAG);
             transaction.commit();
         }
     }

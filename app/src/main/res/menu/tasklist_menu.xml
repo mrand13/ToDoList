@@ -14,10 +14,4 @@
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/completed_taskview"
-        android:title="@string/completed_taskview"
-        app:showAsAction="never"/>
-
 </menu>
