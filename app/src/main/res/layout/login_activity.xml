@@ -67,15 +67,5 @@
             android:gravity="center"
             android:textSize="16dp">
         </TextView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Help"
-            android:id="@+id/help_click"
-            android:layout_gravity="center_horizontal"
-            android:clickable="true" />
-
     </LinearLayout>
 </ScrollView>

@@ -4,21 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="192dp"
     android:gravity="bottom"
-    android:background="@color/colorPrimaryDark"
-    android:padding="16dp">
+    android:background="@color/colorPrimary"
+    android:padding="16dp"
+    android:weightSum="1">
 
-    <TextView
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/nav_header"
-        android:textColor="@android:color/white"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+        android:layout_height="99dp"
+        android:id="@+id/imageView2"
+        android:src="@drawable/tusk_list_logo"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.59" />
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/nav_header_currentuser"
-        android:textColor="@android:color/white"
+        android:textColor="@color/colorPrimaryDark"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
 </LinearLayout>

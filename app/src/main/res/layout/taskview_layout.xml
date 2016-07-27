@@ -54,7 +54,8 @@
         android:layout_height="wrap_content"
         android:text="@string/priority_radio"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:paddingTop="18dp"/>
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -103,7 +104,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/taskview_create_tv_datetime"
                 android:layout_centerHorizontal="true"
-                android:text="No Time Set"/>
+                android:text="No Time Set"
+                android:paddingTop="5dp"/>
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

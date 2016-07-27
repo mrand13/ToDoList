@@ -78,24 +78,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                String emailval = email.getText().toString();
-
                 if(user != null){
                     //User is signed in
-
-                    LayoutInflater inflater = getLayoutInflater();
-                    View layout = inflater.inflate(R.layout.welcome_toast,
-                            (ViewGroup) findViewById(R.id.toast_layout_root));
-
-                    TextView text = (TextView) layout.findViewById(R.id.textView);
-                    text.setText("Welcome " + emailval);
-
-                    Toast toast = new Toast(getApplicationContext());
-                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                    toast.setDuration(Toast.LENGTH_SHORT);
-                    toast.setView(layout);
-                    toast.show();
-
                     //Launch Task Actvitiy
                     startTaskActivity();
                 }
@@ -159,13 +143,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v){
                 Intent intent = new Intent(getApplicationContext(),SignupActivity.class);
                 startActivityForResult(intent,REQUEST_SIGNUP_RESULT);
-            }
-        });
-        help = (TextView) findViewById(R.id.help_click);
-        help.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent myIntent = new Intent(getApplicationContext(), WelcomeActivity.class);
-                startActivityForResult(myIntent, 0);
             }
         });
     }

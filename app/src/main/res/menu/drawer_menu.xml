@@ -19,6 +19,11 @@
             android:title="Settings"
             android:checkable="true"/>
         <item
+            android:id="@+id/nav_drawer_help"
+            android:icon="@drawable/ic_help_outline_black"
+            android:title="Help"
+            android:checkable="true"/>
+        <item
             android:id="@+id/nav_drawer_signout"
             android:icon="@drawable/ic_power_black"
             android:title="Sign Out"
