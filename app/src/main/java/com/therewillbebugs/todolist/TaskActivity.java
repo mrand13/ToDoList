@@ -30,6 +30,15 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
+
+/*TODO: For Wednesday 27th
+
+    1. Create help fragment
+    2. Style style style
+    3. Fix completed tasks page
+ */
+
+
 public class TaskActivity extends AppCompatActivity
         implements TaskListFragment.OnTaskListItemClicked,
         TaskViewFragment.OnTaskCreationCompleteListener,

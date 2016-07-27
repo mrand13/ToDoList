@@ -4,29 +4,31 @@
         <item
             android:id="@+id/nav_drawer_tasklist"
             android:icon="@drawable/ic_view_list_black"
-            android:title="Task List"
+            android:title="@string/nav_item_1"
             android:checkable="true"/>
         <item
             android:id="@+id/nav_drawer_completed_tasks"
             android:icon="@drawable/ic_view_list_black"
-            android:title="Completed Tasks"
+            android:title="@string/nav_item_2"
             android:checkable="true"/>
     </group>
     <group android:id="@+id/nav_drawer_group2">
         <item
             android:id="@+id/nav_drawer_settings"
             android:icon="@drawable/ic_settings_black"
-            android:title="Settings"
+            android:title="@string/action_settings"
             android:checkable="true"/>
         <item
             android:id="@+id/nav_drawer_help"
             android:icon="@drawable/ic_help_outline_black"
-            android:title="Help"
+            android:title="@string/nav_item_4"
             android:checkable="true"/>
+    </group>
+    <group android:id="@+id/nav_drawer_group3">
         <item
             android:id="@+id/nav_drawer_signout"
             android:icon="@drawable/ic_power_black"
-            android:title="Sign Out"
+            android:title="@string/nav_item_5"
             android:checkable="true"/>
     </group>
 </menu>
