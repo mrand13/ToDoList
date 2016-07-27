@@ -55,7 +55,7 @@
                         android:layout_alignParentRight="true"
                         android:id="@+id/textview_task_priority"
                         android:layout_centerVertical="true"
-                        android:textColor="#FF0000"
+                        android:textColor="@color/accent"
                         android:textSize="20dp"/>
                 </RelativeLayout>
 

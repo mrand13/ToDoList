@@ -18,7 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="?attr/colorPrimaryDark"
+            android:theme="@style/MyMaterialThemeToolbar"
             android:elevation="4dp"
             android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
@@ -29,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/colorPrimary"
+        android:background="@color/primary_light"
         app:menu="@menu/drawer_menu"
         app:headerLayout="@layout/nav_drawer_header"/>
 </android.support.v4.widget.DrawerLayout>
