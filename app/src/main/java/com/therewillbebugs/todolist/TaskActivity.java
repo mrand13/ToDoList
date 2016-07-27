@@ -43,7 +43,8 @@ public class TaskActivity extends AppCompatActivity
         implements TaskListFragment.OnTaskListItemClicked,
         TaskViewFragment.OnTaskCreationCompleteListener,
         SettingsFragment.OnSettingsCompleteListener,
-        TaskManager.OnDatabaseUpdate{
+        TaskManager.OnDatabaseUpdate,
+        HelpFragment.OnHelpCompleteListener{
 
     //private members, this should be changed to R.array, temp
     //Drawer Members
@@ -117,7 +118,7 @@ public class TaskActivity extends AppCompatActivity
             return;
         }
         if(!currentFragmentClass.equals(TaskListFragment.class)){
-            super.onBackPressed();
+            swapBackToList();
         }
     }
 
@@ -205,6 +206,11 @@ public class TaskActivity extends AppCompatActivity
     public void onSettingsComplete(boolean settingsSaved) {
         swapBackToList();
     }
+
+    @Override
+    public void onHelpComplete(boolean result){
+        swapBackToList();
+    }
     //endregion
 
     //region DRAWER
@@ -256,6 +262,12 @@ public class TaskActivity extends AppCompatActivity
                 currentFragmentClass = SettingsFragment.class;
             }
         }
+        else if(id == R.id.nav_drawer_help){
+            if(!currentFragmentClass.equals(HelpFragment.class)){
+                initHelpView();
+                currentFragmentClass = HelpFragment.class;
+            }
+        }
         else if(id == R.id.nav_drawer_signout){
             taskManager.cleanupDatabse();
             this.finish();
@@ -298,11 +310,25 @@ public class TaskActivity extends AppCompatActivity
 
     private void initCompletedTaskListView(ArrayList<Task> taskList) {
         if (findViewById(R.id.content_frame) != null) {
+            //Swap fragments using Replace so that we can return to previous views
             CompletedTasksFragment fragment = CompletedTasksFragment.newInstance(taskList);
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
             transaction.replace(R.id.content_frame, fragment, CompletedTasksFragment.TAG);
             transaction.addToBackStack(CompletedTasksFragment.TAG);
+            transaction.commit();
+        }
+    }
+
+    //Creates the help view Fragment and adds it to the content frame, adds to back stack so
+    //navigation up the stack is possible to return to previous views
+    private void initHelpView(){
+        if(findViewById(R.id.content_frame) != null){
+            HelpFragment fragment = new HelpFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            transaction.replace(R.id.content_frame, fragment, HelpFragment.TAG);
+            transaction.addToBackStack(HelpFragment.TAG);
             transaction.commit();
         }
     }
@@ -360,8 +386,20 @@ public class TaskActivity extends AppCompatActivity
 
     private void swapBackToList(){
         //Remove the TaskViewFragment, change the view back to the TaskListFragment
-        getSupportFragmentManager().popBackStack();
+        for(int i = 0; i<getSupportFragmentManager().getBackStackEntryCount(); i++) {
+            getSupportFragmentManager().popBackStack();
+            getSupportFragmentManager().executePendingTransactions();
+        }
+
         getSupportFragmentManager().executePendingTransactions();
+        navDrawer.getMenu().getItem(0).setChecked(true);
+        if(previousMenuItem != null)
+            previousMenuItem.setChecked(false);
+        previousMenuItem = navDrawer.getMenu().getItem(0);
+
+        setTitle("Task List");
+        currentFragmentClass = TaskListFragment.class;
+        initTaskListView();
         syncTaskList();
     }
 
