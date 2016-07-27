@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:id="@+id/nav_drawer_group1">
         <item
@@ -17,6 +18,11 @@
             android:id="@+id/nav_drawer_settings"
             android:icon="@drawable/ic_settings_black"
             android:title="Settings"
+            android:checkable="true"/>
+        <item
+            android:id="@+id/nav_drawer_help"
+            android:icon="@drawable/ic_help_outline_black_24dp"
+            android:title="Help"
             android:checkable="true"/>
         <item
             android:id="@+id/nav_drawer_signout"
