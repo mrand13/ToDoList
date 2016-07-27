@@ -2,9 +2,11 @@ package com.therewillbebugs.todolist;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,12 +55,13 @@ public class TaskListFragment extends android.support.v4.app.Fragment
     //Override functions
     //-------------------------------------
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
+        Activity a = (Activity)context;
         try{
-            callbackListener = (OnTaskListItemClicked)activity;
+            callbackListener = (OnTaskListItemClicked)a;
         } catch (ClassCastException e){
-            throw new ClassCastException(activity.toString() + " must implement OnTaskListItemClicked");
+            throw new ClassCastException(a.toString() + " must implement OnTaskListItemClicked");
         }
     }
 
@@ -67,7 +70,6 @@ public class TaskListFragment extends android.support.v4.app.Fragment
         super.onCreate(savedInstanceState);
 
         this.taskList = new ArrayList<Task>();
-
         Bundle args = getArguments();
         if(args != null && args.containsKey(SERIAL_LIST_KEY)) {
             ArrayList<Task> temp = (ArrayList<Task>) args.getSerializable(SERIAL_LIST_KEY);

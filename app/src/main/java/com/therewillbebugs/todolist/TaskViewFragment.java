@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
@@ -61,12 +62,13 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
     //Override functions
     //-------------------------------------
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
+        Activity a = (Activity)context;
         try{
-            callbackListener = (OnTaskCreationCompleteListener)activity;
+            callbackListener = (OnTaskCreationCompleteListener)a;
         } catch (ClassCastException e){
-            throw new ClassCastException(activity.toString() + " must implement OnTaskCreationCompleteListener");
+            throw new ClassCastException(a.toString() + " must implement OnTaskCreationCompleteListener");
         }
     }
 
@@ -182,7 +184,7 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
     }
 
     public void createNewTask(View view){
-        //Send task back to MainActivity so it can be added to the list
+        //Send task back to TaskActivity so it can be added to the list
         //TODO: add checks for complete form, require description
         task.setTitle(editTextTitle.getText().toString());
         task.setDescription(editTextDescription.getText().toString());
