@@ -1,24 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollview"
     android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:background="@color/colorPrimary"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:src="@drawable/tusk_list_logo"
+        android:layout_centerHorizontal="true" />
 
     <TextView
+        android:id="@+id/help_header"
         android:layout_width="match_parent"
-        android:layout_height="302dp"
-        android:text="Information about the task list..."
-        android:id="@+id/textView3"
-        android:layout_gravity="center_vertical"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="?attr/actionBarSize" />
+        android:layout_height="wrap_content"
+        android:text="@string/help"
+        android:gravity="bottom"
+        android:layout_below="@+id/imageView2" />
+
+    <TextView
+        android:id="@+id/creator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/created_by"
+        android:gravity="bottom"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/help_header"
+        android:layout_alignParentStart="true" />
 
     <android.support.v7.widget.AppCompatButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/help_close_btn"
         android:text="@string/close"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="382dp"
+        android:layout_alignParentBottom="true" />
 
-</LinearLayout>
+</RelativeLayout>

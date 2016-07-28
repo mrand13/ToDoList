@@ -49,4 +49,6 @@
 
     <!-- Help View Strings -->
     <string name="close">Close</string>
+    <string name="created_by">Created by: Michael Rand, Patrick Kane, and Sarah Power</string>
+    <string name="help">Welcome to Tusk List!  This app is designed to help make your life a little easier by recording and prioritizing your daily tasks.  To create a new task, simply click on the (red) plus button and fill out some information about the task.  To mark a task as completed, check the box next to the corresponding task on the main screen.  To edit any information about a task, just click on the task and make your changes.</string>
 </resources>

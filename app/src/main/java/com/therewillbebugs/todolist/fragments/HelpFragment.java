@@ -32,7 +32,7 @@ public class HelpFragment extends android.support.v4.app.Fragment {
             this.context = context;
             listener = (OnHelpCompleteListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnSettingsCompleteListener");
+            throw new ClassCastException(context.toString() + " must implement OnHelpCompleteListener");
         }
     }
 
