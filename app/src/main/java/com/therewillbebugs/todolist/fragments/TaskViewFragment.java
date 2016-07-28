@@ -1,4 +1,4 @@
-package com.therewillbebugs.todolist;
+package com.therewillbebugs.todolist.fragments;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -14,13 +14,15 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import com.therewillbebugs.todolist.R;
+import com.therewillbebugs.todolist.task_components.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -41,6 +43,7 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
     private Button createButton, cancelButton, pickTimeButton, pickDateButton;
     private EditText editTextTitle, editTextDescription;
     private RadioGroup priorityRadioGroup;
+    private TextView notificationText;
 
     private static TextView timeDateTV;
     private static String timeString, dateString;
@@ -96,10 +99,27 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
         cancelButton = (Button)rootView.findViewById(R.id.taskview_create_btn_canceltask);
         pickTimeButton = (Button)rootView.findViewById(R.id.taskview_create_btn_picktime);
         pickDateButton = (Button)rootView.findViewById(R.id.taskview_create_btn_pickdate);
+        notificationText = (TextView)rootView.findViewById(R.id.notifications_on);
 
         timeDateTV = (TextView)rootView.findViewById(R.id.taskview_create_tv_datetime);
         timeString = "";
         dateString = "";
+
+        // set default priority level from settings if user has enabled one
+        Task.PRIORITY_LEVEL defaultPriority = SettingsFragment.getDefaultPriorityLevel();
+
+        if (defaultPriority != null) {
+            RadioButton btn = (RadioButton)priorityRadioGroup.getChildAt(defaultPriority.getVal());
+            btn.setChecked(true);
+        }
+
+        // set text displaying whether or not notifications are enabled
+        boolean notificationsEnabled = SettingsFragment.getNotificationsEnabled();
+        String msg = notificationsEnabled ? getString(R.string.notifications_on)
+                                          : getString(R.string.notifications_off);
+
+        notificationText.setText(msg);
+        ///////////////////////////////////////////////////////////////////
 
         if(!initNewTask)
             populateView();
@@ -142,11 +162,6 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
             inflater.inflate(R.menu.menu_main, menu);   //Show empty menu if new task
         else inflater.inflate(R.menu.taskview_menu, menu);  //Show delete menu if old task
         super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
     }
 
     //functions
