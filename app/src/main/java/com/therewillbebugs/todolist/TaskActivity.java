@@ -191,7 +191,9 @@ public class TaskActivity extends AppCompatActivity
 
     @Override
     public void onDatabaseUpdate(){
-        syncTaskList();
+        if(currentFragmentClass.equals(CompletedTasksFragment.class))
+            syncCompletedTaskList();
+        else syncTaskList();
     }
 
     @Override
@@ -400,6 +402,19 @@ public class TaskActivity extends AppCompatActivity
         //refresh the taskview, notify data changed
         FragmentManager man = this.getSupportFragmentManager();
         TaskListFragment frag = (TaskListFragment) man.findFragmentByTag(TaskListFragment.TAG);
+        //TODO Fix this error handling, its gross
+        if (frag != null) {
+            taskManager.sort();
+            frag.refreshRecyclerList(taskManager.getTaskList());
+        }
+        else Toast.makeText(this, "Error couldn't refresh", Toast.LENGTH_SHORT).show();
+    }
+
+    //Syncs the tasklist from taskmanager with the recycler view
+    private void syncCompletedTaskList(){
+        //refresh the taskview, notify data changed
+        FragmentManager man = this.getSupportFragmentManager();
+        CompletedTasksFragment frag = (CompletedTasksFragment) man.findFragmentByTag(CompletedTasksFragment.TAG);
         //TODO Fix this error handling, its gross
         if (frag != null) {
             taskManager.sort();

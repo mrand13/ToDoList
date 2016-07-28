@@ -29,19 +29,17 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 
     private View rootView;
     private OnSettingsCompleteListener listener;
-    private Activity activity;
     private RadioGroup defaultPriorityGroup;
     private CheckBox notificationsEnabledCheckbox;
     private Button saveButton, cancelButton;
 
     @Override
-    public void onAttach(Activity activity){
-        super.onAttach(activity);
+    public void onAttach(Context context){
+        super.onAttach(context);
         try{
-            listener = (OnSettingsCompleteListener)activity;
-            this.activity = activity;
+            listener = (OnSettingsCompleteListener)context;
         } catch (ClassCastException e){
-            throw new ClassCastException(activity.toString() + " must implement OnSettingsCompleteListener");
+            throw new ClassCastException(getActivity().toString() + " must implement OnSettingsCompleteListener");
         }
     }
 
@@ -80,7 +78,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
         });
 
         // retrieve settings from SharedPreferences should they exist
-        SharedPreferences settings = activity.getSharedPreferences("settings", Context.MODE_APPEND);
+        SharedPreferences settings = getActivity().getSharedPreferences("settings", Context.MODE_APPEND);
         if (settings != null) {
             notificationsEnabled
                 = settings.getBoolean(NOTIFICATIONS_ENABLED_KEY, true);
@@ -102,7 +100,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
     @Override
     public void onPause() {
         SharedPreferences.Editor outState
-            = activity.getSharedPreferences("settings", Context.MODE_APPEND).edit();
+            = getActivity().getSharedPreferences("settings", Context.MODE_APPEND).edit();
 
         outState.putInt(DEFAULT_PRIORITY_KEY, defaultPriorityLevel.getVal());
         outState.putBoolean(
