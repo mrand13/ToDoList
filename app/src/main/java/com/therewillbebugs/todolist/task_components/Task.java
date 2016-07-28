@@ -54,13 +54,13 @@ public class Task implements Serializable {
         this.notificationDelayInMillis = 0;
     }
 
-    public Task(String task_key, String title, String description, int priority, String date, String time){
+    public Task(String task_key, String title, String description, int priority, String date, String time, boolean complete){
         this.task_key = task_key;
         this.title = title;
         this.description = description;
         this.priorityLevel = PRIORITY_LEVEL.get(priority);
         this.notifications = true;
-        this.complete = false;
+        this.complete = complete;
         this.notificationDelayInMillis = 0;
 
         SimpleDateFormat sdf;
@@ -88,7 +88,7 @@ public class Task implements Serializable {
 
     //Constructor for the DB_Task, DB_Task variables are case/name sensitive
     public Task(DB_Task db_task){
-        this(db_task.task_key, db_task.title, db_task.description, db_task.priority, db_task.dateStr, db_task.timeStr);
+        this(db_task.task_key, db_task.title, db_task.description, db_task.priority, db_task.dateStr, db_task.timeStr, db_task.isComplete);
     }
 
     //Mutators
@@ -197,6 +197,7 @@ public class Task implements Serializable {
         result.put("priority",priorityLevel.getVal());
         result.put("dateStr",getDateToDBString());
         result.put("timeStr",getTimeToString());
+        result.put("isComplete",complete);
         return result;
     }
 }

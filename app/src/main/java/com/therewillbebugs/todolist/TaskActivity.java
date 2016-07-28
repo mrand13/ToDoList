@@ -143,6 +143,8 @@ public class TaskActivity extends AppCompatActivity
     }
 
     //region CALLBACK HANDLERS
+    //---------------------------------------------
+    //---------------------------------------------
     @Override
     public void onTaskListItemClick(int position){
         //Swap fragments to the TaskView for the given task
@@ -156,21 +158,9 @@ public class TaskActivity extends AppCompatActivity
     }
 
     @Override
-    //TODO IMPLEMENT THIS IN DB
     public void onTaskListItemChecked(int position, boolean checked){
         selectedTask = taskManager.get(position);
-        if(checked) {
-            Toast.makeText(this, "Task Complete!", Toast.LENGTH_SHORT).show();
-            selectedTask.setComplete(true);
-            taskManager.remove(selectedTask);
-            taskManager.add(selectedTask);
-        }
-        else{
-            selectedTask.setComplete(false);
-            taskManager.remove(selectedTask);
-            taskManager.add(0,selectedTask);
-        }
-        syncTaskList();
+        taskManager.setTaskChecked(selectedTask, checked);
     }
 
     @Override
@@ -412,6 +402,7 @@ public class TaskActivity extends AppCompatActivity
         TaskListFragment frag = (TaskListFragment) man.findFragmentByTag(TaskListFragment.TAG);
         //TODO Fix this error handling, its gross
         if (frag != null) {
+            taskManager.sort();
             frag.refreshRecyclerList(taskManager.getTaskList());
         }
         else Toast.makeText(this, "Error couldn't refresh", Toast.LENGTH_SHORT).show();
