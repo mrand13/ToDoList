@@ -389,6 +389,7 @@ public class TaskActivity extends AppCompatActivity
         if(previousMenuItem != null)
             previousMenuItem.setChecked(false);
         previousMenuItem = navDrawer.getMenu().getItem(0);
+        previousMenuItem.setChecked(true);
 
         //Change the action bar title
         setTitle(getResources().getString(R.string.nav_item_1));

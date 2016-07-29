@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="192dp"
     android:gravity="bottom"
-    android:background="@color/colorPrimary"
+    android:background="@color/windowBackground"
     android:padding="16dp"
     android:weightSum="1">
 
@@ -22,6 +22,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/nav_header_currentuser"
         android:textColor="@color/colorPrimaryDark"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"/>
 
 </LinearLayout>

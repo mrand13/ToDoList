@@ -4,13 +4,17 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.therewillbebugs.todolist.R;
+
+import org.w3c.dom.Text;
 
 //Help fragment for displaying information about how to use the app
 public class HelpFragment extends android.support.v4.app.Fragment {
@@ -24,6 +28,7 @@ public class HelpFragment extends android.support.v4.app.Fragment {
     private Context context;
     private OnHelpCompleteListener listener;
     private AppCompatButton closeButton;
+    private TextView github,portal;
 
     @Override
     public void onAttach(Context context) {
@@ -49,6 +54,11 @@ public class HelpFragment extends android.support.v4.app.Fragment {
                 listener.onHelpComplete(true);
             }
         });
+
+        portal = (TextView)rootView.findViewById(R.id.portal);
+        github = (TextView)rootView.findViewById(R.id.github);
+        portal.setMovementMethod(LinkMovementMethod.getInstance());
+        github.setMovementMethod(LinkMovementMethod.getInstance());
         return rootView;
     }
 

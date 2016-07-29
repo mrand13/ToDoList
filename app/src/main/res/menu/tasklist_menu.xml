@@ -5,7 +5,7 @@
     <!-- Sort icon -->
     <item
         android:id="@+id/action_sort_tasks"
-        android:icon="@drawable/ic_sort_black"
+        android:icon="@drawable/ic_sort_white"
         android:title="Sort"
         app:showAsAction="ifRoom"/>
 

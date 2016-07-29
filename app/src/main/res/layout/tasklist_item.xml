@@ -2,18 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:paddingTop="8dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="8dp"
     android:orientation="horizontal">
 
     <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemes.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/taskview_cardview"
-        android:elevation="8dp">
+        card_view:cardElevation="4dp"
+        card_view:cardCornerRadius="3dp"
+        card_view:cardUseCompatPadding="true"
+        android:layout_margin="6dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -47,53 +55,58 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tasklist_item_content"
-                android:padding="16dp"
-                android:layout_toEndOf="@+id/tasklist_item_cbox_layout">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:id="@+id/tasklist_item_toplayout">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:ellipsize="marquee"
-                        android:scrollHorizontally="true"
-                        android:singleLine="true"
-                        android:id="@+id/textview_task_title"
-                        android:layout_toStartOf="@+id/textview_task_priority"
-                        android:textSize="20sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:id="@+id/textview_task_priority"
-                        android:layout_centerVertical="true"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="20sp"/>
-                </RelativeLayout>
+                android:layout_toEndOf="@+id/tasklist_item_cbox_layout"
+                android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/textview_task_description"
-                    android:layout_below="@+id/tasklist_item_toplayout"
-                    android:textSize="15sp"/>
+                    android:layout_alignParentStart="true"
+                    android:ellipsize="end"
+                    android:scrollHorizontally="true"
+                    android:maxLines="1"
+                    android:id="@+id/textview_task_title"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:textSize="20sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tasklist_item_midlayout"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/textview_task_title"
+                    android:weightSum="3">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:scrollHorizontally="true"
+                        android:maxLines="1"
+                        android:layout_weight="2"
+                        android:id="@+id/textview_task_description"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textview_task_priority"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="17sp"
+                        android:gravity="end"/>
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textview_task_timedate"
-                    android:layout_below="@+id/textview_task_description"
+                    android:layout_below="@+id/tasklist_item_midlayout"
                     android:gravity="center_horizontal"
                     android:textSize="17sp"/>
 
             </RelativeLayout>
         </RelativeLayout>
-
     </android.support.v7.widget.CardView>
 </LinearLayout>

@@ -1,45 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollview"
-    android:orientation="vertical"
-    android:background="@color/colorPrimary"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView2"
-        android:src="@drawable/tusk_list_logo"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
-        android:id="@+id/help_header"
+    <android.support.v4.widget.NestedScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/help_scrollview"
+        android:orientation="vertical"
+        android:background="@color/windowBackground"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/help"
-        android:gravity="bottom"
-        android:layout_below="@+id/imageView2" />
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/creator"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/created_by"
-        android:gravity="bottom"
-        android:layout_marginTop="40dp"
-        android:layout_below="@+id/help_header"
-        android:layout_alignParentStart="true" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:padding="16dp">
 
-    <android.support.v7.widget.AppCompatButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/help_close_btn"
-        android:text="@string/close"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentTop="false"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="382dp"
-        android:layout_alignParentBottom="true" />
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:id="@+id/help_layout_logo"
+                android:src="@drawable/tusk_list_logo"
+                android:layout_gravity="center_horizontal"/>
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/help_welcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/help_message"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:padding="10dp"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/help_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/help"
+                android:padding="10dp"/>
+
+            <TextView
+                android:id="@+id/creator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/created_by"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:padding="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/portal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/call_to_action_portal"
+                        android:gravity="center"
+                        android:layout_weight="1"
+                        android:padding="10dp"/>
+
+                    <TextView
+                        android:id="@+id/github"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/call_to_action_github"
+                        android:gravity="center"
+                        android:layout_weight="1"
+                        android:padding="10dp"/>
+                </LinearLayout>
+
+            <android.support.v7.widget.AppCompatButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/help_close_btn"
+                android:text="@string/close"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>

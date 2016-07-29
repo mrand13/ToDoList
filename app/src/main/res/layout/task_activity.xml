@@ -19,8 +19,9 @@
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            android:theme="@style/MyMaterialTheme.Toolbar"
+            app:popupTheme="@style/Theme.AppCompat.NoActionBar"
+            android:elevation="4dp"/>
 
     </FrameLayout>
     <!-- Navigation Drawer -->
@@ -29,7 +30,11 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/colorPrimary"
+        android:fitsSystemWindows="true"
+        android:background="@color/windowBackground"
         app:menu="@menu/drawer_menu"
-        app:headerLayout="@layout/nav_drawer_header"/>
+        app:headerLayout="@layout/nav_drawer_header"
+        app:itemTextColor="@color/nav_item_color"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemBackground="@drawable/nav_item_drawable"/>
 </android.support.v4.widget.DrawerLayout>

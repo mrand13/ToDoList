@@ -5,7 +5,7 @@
             android:id="@+id/nav_drawer_tasklist"
             android:icon="@drawable/ic_view_list_black"
             android:title="@string/nav_item_1"
-            android:checkable="true"/>
+            android:checkable="true" />
         <item
             android:id="@+id/nav_drawer_completed_tasks"
             android:icon="@drawable/ic_view_list_black"

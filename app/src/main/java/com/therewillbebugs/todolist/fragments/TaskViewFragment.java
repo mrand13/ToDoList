@@ -196,7 +196,7 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
         ((RadioButton)priorityRadioGroup.getChildAt(task.getPriorityLevel().getVal())).setChecked(true);
 
         timeDateTV.setText(task.getDateTimeString());
-
+        ((TextView)rootView.findViewById(R.id.create_task_header)).setText("Edit Task");
         notificationSelector = !task.isNotificationsEnabled();
         toggleNotifications();
     }
