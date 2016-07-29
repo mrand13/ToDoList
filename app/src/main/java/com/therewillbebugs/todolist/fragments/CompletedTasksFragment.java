@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -69,6 +71,8 @@ public class CompletedTasksFragment extends android.support.v4.app.Fragment
             ArrayList<Task> temp = (ArrayList<Task>) args.getSerializable(COMPLETED_TASKS_KEY);
             this.completedTasks.addAll(temp);
         }
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -78,6 +82,12 @@ public class CompletedTasksFragment extends android.support.v4.app.Fragment
         initRecycler();
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     private void initRecycler(){

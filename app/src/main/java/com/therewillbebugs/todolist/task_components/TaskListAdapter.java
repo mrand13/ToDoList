@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.therewillbebugs.todolist.R;
@@ -38,6 +39,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
         public CardView cv;
         public TextView title, description, priority, timedate;
         public CheckBox complete;
+        public ImageView notificationIV;
         private View view;
 
         public interface OnCardViewClickListener{
@@ -56,6 +58,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
             priority = (TextView)view.findViewById(R.id.textview_task_priority);
             timedate = (TextView)view.findViewById(R.id.textview_task_timedate);
             complete =  (CheckBox)view.findViewById(R.id.tasklist_item_cbox_complete);
+            notificationIV = (ImageView)view.findViewById(R.id.tasklist_item_notifications);
 
             this.clickListener = listener;
             view.setOnClickListener(this);
@@ -148,6 +151,10 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.ViewHo
                 return false;
             }
         });
+
+        if(task.isNotificationsEnabled())
+            holder.notificationIV.setImageResource(R.drawable.ic_notifications_active_black);
+        else holder.notificationIV.setImageResource(android.R.color.transparent);
     }
 
     @Override

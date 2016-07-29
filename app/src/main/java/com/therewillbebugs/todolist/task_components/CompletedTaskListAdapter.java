@@ -144,10 +144,10 @@ public class CompletedTaskListAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     public void swap(ArrayList<Task> tl){
-        //this.allCompletedTasks.clear();
-        //this.allCompletedTasks.addAll(tl);
-        //initCompletedMap();
-        //notifyDataSetChanged();
+        this.allCompletedTasks.clear();
+        this.allCompletedTasks.addAll(tl);
+        initCompletedMap();
+        notifyDataSetChanged();
     }
 
     private void initCompletedMap(){
@@ -183,17 +183,19 @@ class CompletedTaskAdapter extends ArrayAdapter<Task>{
         }
         ImageView image = (ImageView)convertView.findViewById(R.id.completed_task_card_listview_image);
         TextView title = (TextView)convertView.findViewById(R.id.completed_task_card_listview_title);
+        TextView time = (TextView)convertView.findViewById(R.id.completed_task_card_listview_time);
 
         if(task.isComplete()) {
             image.setImageResource(R.drawable.ic_done_black);
             image.setColorFilter(getContext().getResources().getColor(R.color.greenHighlight));
         }
         else {
-            image.setImageResource(R.drawable.ic_block_black);
+            image.setImageResource(R.drawable.ic_priority_black);
             image.setColorFilter(getContext().getResources().getColor(R.color.redHighlight));
         }
-
         title.setText(task.getTitle());
+        time.setText(task.getTimeToString());
+
         return convertView;
     }
 }

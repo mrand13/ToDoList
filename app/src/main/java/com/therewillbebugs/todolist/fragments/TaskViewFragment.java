@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -44,10 +45,11 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
     private EditText editTextTitle, editTextDescription;
     private RadioGroup priorityRadioGroup;
     private TextView notificationText;
+    private ImageView notifcationEnabledIV;
 
     private static TextView timeDateTV;
     private static String timeString, dateString;
-    private boolean initNewTask;
+    private boolean initNewTask, notificationSelector;
 
     public static TaskViewFragment newInstance(Task t){
         TaskViewFragment fragment = new TaskViewFragment();
@@ -99,7 +101,8 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
         cancelButton = (Button)rootView.findViewById(R.id.taskview_create_btn_canceltask);
         pickTimeButton = (Button)rootView.findViewById(R.id.taskview_create_btn_picktime);
         pickDateButton = (Button)rootView.findViewById(R.id.taskview_create_btn_pickdate);
-        notificationText = (TextView)rootView.findViewById(R.id.notifications_on);
+        notificationText = (TextView)rootView.findViewById(R.id.taskview_create_notifcations);
+        notifcationEnabledIV = (ImageView)rootView.findViewById(R.id.taskview_create_notifcations_iv);
 
         timeDateTV = (TextView)rootView.findViewById(R.id.taskview_create_tv_datetime);
         timeString = "";
@@ -114,11 +117,21 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
         }
 
         // set text displaying whether or not notifications are enabled
-        boolean notificationsEnabled = SettingsFragment.getNotificationsEnabled();
-        String msg = notificationsEnabled ? getString(R.string.notifications_on)
-                                          : getString(R.string.notifications_off);
+        notificationSelector = !SettingsFragment.getNotificationsEnabled();
+        toggleNotifications();
 
-        notificationText.setText(msg);
+        notificationText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleNotifications();
+            }
+        });
+        notifcationEnabledIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleNotifications();
+            }
+        });
         ///////////////////////////////////////////////////////////////////
 
         if(!initNewTask)
@@ -167,17 +180,25 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
     //functions
     //-------------------------------------
 
+    private void toggleNotifications(){
+        notificationSelector = !notificationSelector;
+        if(notificationSelector)
+            notifcationEnabledIV.setImageResource(R.drawable.ic_notifications_active_black);
+        else notifcationEnabledIV.setImageResource(R.drawable.ic_notifications_off_black);
+        String msg = notificationSelector ? getString(R.string.notifications_on)
+                : getString(R.string.notifications_off);
+        notificationText.setText(msg);
+    }
+
     private void populateView(){
         editTextTitle.setText(task.getTitle());
         editTextDescription.setText(task.getDescription());
         ((RadioButton)priorityRadioGroup.getChildAt(task.getPriorityLevel().getVal())).setChecked(true);
 
-        dateString = task.getDateToString();
-        timeString = task.getTimeToString();
-        //TODO Clean this up, it wont work in all cases
-        if(!dateString.isEmpty() && !timeString.isEmpty())
-            timeDateTV.setText("Complete By: " + dateString + " at " + timeString);
-        else timeDateTV.setText("Complete By: " + timeString);
+        timeDateTV.setText(task.getDateTimeString());
+
+        notificationSelector = !task.isNotificationsEnabled();
+        toggleNotifications();
     }
 
     public void createNewTask(View view){
@@ -192,6 +213,7 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
         int index = priorityRadioGroup.indexOfChild(rdoButton);
         task.setPriorityLevel(Task.PRIORITY_LEVEL.get(index));
         task.setComplete(false);
+        task.setNotificationsEnabled(notificationSelector);
 
         if(task != null) {
             if(initNewTask)
@@ -231,12 +253,7 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
             c.set(Calendar.HOUR_OF_DAY, hourOfDay);
             c.set(Calendar.MINUTE, minute);
             task.setTime(c);
-            //Format the textview
-            SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
-            timeString = sdf.format(c.getTime());
-            if(!dateString.isEmpty())
-                timeDateTV.setText("Complete By: " + dateString + " at " + timeString);
-            else timeDateTV.setText("Complete By: " + timeString);
+            timeDateTV.setText(task.getDateTimeString());
         }
     }
 
@@ -255,12 +272,7 @@ public class TaskViewFragment extends android.support.v4.app.Fragment {
             Calendar c = Calendar.getInstance();
             c.set(year,month,day);
             task.setDate(c);
-            //Format the textview
-            SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMMM d, yyyy");
-            dateString = sdf.format(c.getTime());
-            if(!timeString.isEmpty())
-                timeDateTV.setText("Complete By: " + dateString + " at " + timeString);
-            else timeDateTV.setText("Complete By: " + dateString);
+            timeDateTV.setText(task.getDateTimeString());
         }
     }
     //endregion

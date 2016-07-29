@@ -18,13 +18,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/tasklist_item_cbox_layout"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_centerVertical="true">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tasklist_item_notifications"
+                    android:layout_alignParentTop="true"/>
 
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tasklist_item_cbox_complete"/>
+                    android:id="@+id/tasklist_item_cbox_complete"
+                    android:layout_below="@+id/tasklist_item_notifications"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tasklist_item_edit"
+                    android:src="@drawable/ic_edit_black"
+                    android:layout_below="@+id/tasklist_item_cbox_complete"/>
 
             </RelativeLayout>
 
@@ -33,8 +47,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tasklist_item_content"
                 android:padding="16dp"
-                android:layout_toRightOf="@+id/tasklist_item_cbox_layout"
-                >
+                android:layout_toEndOf="@+id/tasklist_item_cbox_layout">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -45,18 +58,22 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:ellipsize="marquee"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
                         android:id="@+id/textview_task_title"
-                        android:textSize="30dp"/>
+                        android:layout_toStartOf="@+id/textview_task_priority"
+                        android:textSize="20sp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
                         android:id="@+id/textview_task_priority"
                         android:layout_centerVertical="true"
-                        android:textColor="#FF0000"
-                        android:textSize="20dp"/>
+                        android:textColor="@color/colorAccent"
+                        android:textSize="20sp"/>
                 </RelativeLayout>
 
                 <TextView
@@ -64,14 +81,15 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/textview_task_description"
                     android:layout_below="@+id/tasklist_item_toplayout"
-                    android:textSize="15dp"/>
+                    android:textSize="15sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/textview_task_timedate"
                     android:layout_below="@+id/textview_task_description"
-                    android:textSize="17dp"/>
+                    android:gravity="center_horizontal"
+                    android:textSize="17sp"/>
 
             </RelativeLayout>
         </RelativeLayout>

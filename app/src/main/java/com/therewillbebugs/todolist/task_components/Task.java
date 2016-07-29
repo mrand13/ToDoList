@@ -1,6 +1,7 @@
 package com.therewillbebugs.todolist.task_components;
 
 import com.google.firebase.database.Exclude;
+import com.therewillbebugs.todolist.R;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -159,8 +160,8 @@ public class Task implements Serializable {
         tempTime = getTimeToString();
         tempDate = getDateToString();
         if(!tempTime.isEmpty())
-            return "Complete By: " + tempDate + " at " + tempTime;
-        else return "Complete By: " + tempDate;
+            return "Due By: " + tempDate + " at " + tempTime;
+        else return "Due By: " + tempDate;
     }
 
     //Returns the scheduled time for the notifications in milliseconds

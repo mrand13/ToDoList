@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ToDoList</string>
+    <string name="app_name">Tusk List</string>
     <string name="action_settings">Settings</string>
     <string name="completed_taskview">Completed Tasks</string>
 
@@ -9,6 +9,9 @@
     <string name="password">Password</string>
     <string name="signup">Create Account</string>
     <string name="already_have_account">Already Have Account? Login Here</string>
+
+    <!-- Task Strings -->
+    <string name="due_date">Due By: </string>
 
     <!-- Navigation Drawer Strings -->
     <string name="drawer_open">Drawer Open</string>
