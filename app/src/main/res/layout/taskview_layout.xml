@@ -118,9 +118,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/taskview_create_btn_pickdate"
                 android:layout_below="@+id/taskview_create_tv_datetime"
-                android:layout_toRightOf="@+id/taskview_create_btn_picktime"
+                android:layout_toEndOf="@+id/taskview_create_btn_picktime"
                 android:text="@string/pick_date"
-                android:layout_alignParentRight="true" />
+                android:layout_alignParentEnd="true" />
         </RelativeLayout>
     </LinearLayout>
 
@@ -135,8 +135,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="20dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -144,14 +143,13 @@
             android:orientation="horizontal"
             android:gravity="center_horizontal"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="40dp">
+            android:layout_centerHorizontal="true">
+
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/taskview_create_btn_canceltask"
-                android:text="@string/cancel_task"
-                android:onClick="cancelCreateTask"/>
+                android:text="@string/cancel_task" />
 
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="wrap_content"
