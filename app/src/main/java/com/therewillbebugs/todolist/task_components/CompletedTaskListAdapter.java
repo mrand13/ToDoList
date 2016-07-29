@@ -186,11 +186,11 @@ class CompletedTaskAdapter extends ArrayAdapter<Task>{
 
         if(task.isComplete()) {
             image.setImageResource(R.drawable.ic_done_black);
-            image.setColorFilter(getContext().getResources().getColor(R.color.greenHighlight));
+            image.setColorFilter(getContext().getResources().getColor(R.color.colorHighlight1));
         }
         else {
             image.setImageResource(R.drawable.ic_block_black);
-            image.setColorFilter(getContext().getResources().getColor(R.color.redHighlight));
+            image.setColorFilter(getContext().getResources().getColor(R.color.colorHighlight2));
         }
 
         title.setText(task.getTitle());

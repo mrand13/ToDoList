@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#EEEEEE</color>
-    <color name="colorPrimaryDark">#757575</color>
-    <color name="textColorPrimary">#000000</color>
-    <color name="windowBackground">#FFFFFF</color>
-    <color name="navigationBarColor">#9e9e9e</color>
-    <color name="colorAccent">#F44336</color>
-    <color name="greenHighlight">#388e3c</color>
-    <color name="redHighlight">#ff5252</color>
+    <color name="colorPrimary">#e3f2fd</color>
+    <color name="colorPrimaryDark">#384d6c</color>
+    <color name="textColorPrimary">#606060</color>
+    <color name="windowBackground">#EEEEEE</color>
+    <color name="navigationBarColor">#6384bf</color>
+    <color name="colorAccent">#36f452</color>
+    <color name="colorHighlight1">#69f0ae</color>
+    <color name="colorHighlight2">#70ff1d</color>
+
 </resources>
