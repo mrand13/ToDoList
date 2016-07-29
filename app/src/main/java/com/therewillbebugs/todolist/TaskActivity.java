@@ -391,7 +391,7 @@ public class TaskActivity extends AppCompatActivity
         previousMenuItem = navDrawer.getMenu().getItem(0);
 
         //Change the action bar title
-        setTitle("Task List");
+        setTitle(getResources().getString(R.string.nav_item_1));
         currentFragmentClass = TaskListFragment.class;
 
         //Init tasklist view and sync the task

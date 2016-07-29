@@ -18,7 +18,7 @@
         android:id="@+id/taskview_create_layout_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="test2"
+        android:hint=""
         android:layout_marginBottom="10dp"
         android:padding="5dp">
 
@@ -36,7 +36,7 @@
         android:id="@+id/taskview_create_layout_desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="test2"
+        android:hint=""
         android:layout_margin="5dp">
 
         <EditText
